@@ -1,0 +1,109 @@
+:local(.donationForm) {
+  font-family: museo-sans,"Helvetica Neue",Helvetica,Arial,sans-serif;
+  margin: auto;
+}
+
+:local(.thankyou) {
+  font-size: 70px;
+}
+
+:local(.fordonation) {
+  font-size: 35px;
+}
+
+:local(.donationForm .cubano) {
+  font-family: Cubano,futura-pt,museo-sans,"Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
+:local(.donation) input {
+  border: none;
+}
+
+:local(.preferredNameInput) {
+  font-family: museo-sans,"Helvetica Neue",Helvetica,Arial,sans-serif;
+  line-height: normal;
+  font-size: 36px;
+}
+
+:local(.preferredEmailInput) {
+  font-family: museo-sans,"Helvetica Neue",Helvetica,Arial,sans-serif;
+  line-height: normal;
+  font-size: 36px;
+}
+
+:local(.amountInput) {
+  font-family: Museo Sans;
+  line-height: normal;
+  font-size: 24px;
+}
+
+:local(.donationArea) {
+  display: flex;
+  flex-direction: row;
+}
+
+:local(.donationAmount:before) {
+  content: '$';
+}
+
+:local(.commentInput) {
+  width: 525px;
+  height: 101px;
+
+  border: 1px solid #5E0324;
+  box-sizing: border-box;
+  border-radius: 5px;
+  resize: none;
+}
+
+:local(.buttons) {
+  display: flex;
+}
+
+:local(.buttons) button {
+  flex-grow: 1;
+  flex-shrink: 0;
+}
+
+:local(.incentives) {
+  display: flex;
+  flex-direction: row;
+}
+
+:local(.searches) {
+  border: 1px solid #5E0324;
+  border-radius: 5px;
+  width: 218px;
+  height: 258px;
+}
+
+:local(.search) {
+  line-height: 21px;
+  font-size: 18px;
+  width: calc(100%);
+  margin-top: 2px;
+  padding: 2px;
+  border: none;
+  border-bottom: 1px solid #5E0324;
+}
+
+:local(.result) {
+  color: #5E0324;
+  height: 32px;
+}
+
+:local(.result):nth-of-type(2) {
+  background-color: rgba(94, 3, 36, 0.1);
+}
+
+:local(.resultRun) {
+  padding-top: 4px;
+  line-height: 12px;
+  font-size: 12px;
+}
+
+:local(.resultName) {
+  font-weight: 500;
+  line-height: 10px;
+  font-size: 10px;
+}

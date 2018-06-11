@@ -4,7 +4,7 @@
   "description": "GDQ Donation Tracker",
   "scripts": {
     "test": "karma start --single-run",
-    "tests": "karma start"
+    "test:watch": "karma start"
   },
   "author": "",
   "license": "ISC",
@@ -29,10 +29,10 @@
     "lodash": "^4.17.4",
     "moment": "^2.13.0",
     "prop-types": "^15.6.0",
-    "react": "^16.2.0",
+    "react": "^16.4.1",
     "react-dnd": "^2.0.0",
     "react-dnd-html5-backend": "^2.1.2",
-    "react-dom": "^16.2.0",
+    "react-dom": "^16.4.1",
     "react-redux": "^5.0.6",
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
@@ -59,6 +59,7 @@
     "file-loader": "^1.1.6",
     "jasmine-core": "^2.3.4",
     "karma": "^2.0.0",
+    "karma-chrome-launcher": "^2.2.0",
     "karma-jasmine": "^1.1.1",
     "karma-jasmine-ajax": "^0.1.13",
     "karma-webpack": "^2.0.9",

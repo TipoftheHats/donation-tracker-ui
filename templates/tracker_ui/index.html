@@ -2,18 +2,34 @@
 {% load staticfiles %}
 
 {% block head %}
-    {{ admin.main.js|safe }}
-    {{ admin.main.css|safe }}
+    {{ bundle.js|safe }}
+    {{ bundle.css|safe }}
     <script type="text/javascript">
-    <!--
-        window.API_ROOT = '{% url 'tracker:api_v1' %}';
-        window.ROOT_PATH = '{% url 'tracker_ui:index' %}';
-        window.STATIC_URL = '{% static '' %}';
-    -->
+      <!--
+      window.API_ROOT = '{% url 'tracker:api_v1' %}';
+      window.ROOT_PATH = '{{ root_path }}';
+      window.STATIC_URL = '{% static '' %}';
+      -->
     </script>
-    <link rel="stylesheet" type="text/css" href="{% static 'main.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'main.css' %}"/>
+    <script type='text/javascript'>
+      <!--
+      document.addEventListener("DOMContentLoaded", function () {
+        window.{{ app }}(
+          Object.assign(
+            {{ props }},
+            {csrfToken: document.querySelector('input[name=csrfmiddlewaretoken]').value}
+          )
+        );
+      });
+      -->
+    </script>
+
 {% endblock %}
 
 {% block content %}
+    <form>
+        {% csrf_token %}
+    </form>
     <div id="container"></div>
 {% endblock %}

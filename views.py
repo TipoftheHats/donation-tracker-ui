@@ -1,20 +1,121 @@
-from django.shortcuts import render
-from tracker.models import Event
-from django.views.decorators.csrf import csrf_protect
+import json
+import os
+from decimal import Decimal
+
 from django.conf import settings
+from django.core import serializers
+from django.core.urlresolvers import reverse
+from django.http import Http404
+from django.shortcuts import render
+from django.utils.safestring import mark_safe
+from django.views.decorators.csrf import csrf_protect
 from webpack_manifest import webpack_manifest
 
-import os
+from tracker import filters, viewutil
+from tracker.models import Event
+
 
 @csrf_protect
 def index(request):
-    webpack = bool(request.META.get('HTTP_X_WEBPACK', False))
-    admin = webpack_manifest.load(
-        os.path.abspath(os.path.join(os.path.dirname(__file__), 'ui-admin.manifest.json')),
-        '/webpack' if webpack else settings.STATIC_URL,
+    bundle = webpack_manifest.load(
+        os.path.abspath(os.path.join(os.path.dirname(__file__), 'ui-tracker.manifest.json')),
+        settings.STATIC_URL,
         debug=settings.DEBUG,
         timeout=60,
         read_retry=None
     )
 
-    return render(request, 'tracker_ui/index.html', dictionary={'event': Event.objects.latest(), 'events': Event.objects.all(), 'admin': admin})
+    return render(
+        request,
+        'tracker_ui/index.html',
+        dictionary={
+            'event': Event.objects.latest(),
+            'events': Event.objects.all(),
+            'bundle': bundle.index,
+            'root_path': reverse('tracker_ui:index'),
+            'app': 'IndexApp',
+            'props': mark_safe(json.dumps({}, ensure_ascii=False, cls=serializers.json.DjangoJSONEncoder)),
+        },
+    )
+
+
+@csrf_protect
+def admin(request):
+    bundle = webpack_manifest.load(
+        os.path.abspath(os.path.join(os.path.dirname(__file__), 'ui-tracker.manifest.json')),
+        settings.STATIC_URL,
+        debug=settings.DEBUG,
+        timeout=60,
+        read_retry=None
+    )
+
+    return render(request, 'tracker_ui/index.html', dictionary={'event': Event.objects.latest(), 'events': Event.objects.all(), 'bundle': bundle.admin, 'root_path': reverse('tracker_ui:admin')})
+
+@csrf_protect
+def donate(request, event):
+    event = viewutil.get_event(event)
+    if event.locked:
+        raise Http404
+
+    bundle = webpack_manifest.load(
+        os.path.abspath(os.path.join(os.path.dirname(__file__), 'ui-tracker.manifest.json')),
+        settings.STATIC_URL,
+        debug=settings.DEBUG,
+        timeout=60,
+        read_retry=None
+    )
+
+    def bid_parent_info(bid):
+        if bid != None:
+            return {'id': bid.id, 'name': bid.name, 'description': bid.description, 'parent': bid_parent_info(bid.parent), 'custom': bid.allowuseroptions}
+        else:
+            return None
+
+    def bid_info(bid):
+        result = {
+            'id': bid.id,
+            'name': bid.name,
+            'description': bid.description,
+            'label': bid.full_label(not bid.allowuseroptions),
+            'count': bid.count,
+            'amount': bid.total,
+            'goal': Decimal(bid.goal or '0.00'),
+            'parent': bid_parent_info(bid.parent)
+        }
+        if bid.speedrun:
+            result['runname'] = bid.speedrun.name
+        else:
+            result['runname'] = 'Event Wide'
+        return result
+
+    bids = filters.run_model_query('bidtarget',
+                                   {'state': 'OPENED', 'event': event.id},
+                                   user=request.user) \
+        .distinct().select_related('parent','speedrun').prefetch_related('suggestions')
+
+    prizes = filters.run_model_query('prize', {'feed': 'current', 'event': event.id})
+
+    bidsArray = [bid_info(o) for o in bids]
+
+    def prize_info(prize):
+        result = {'id': prize.id, 'name': prize.name, 'description': prize.description, 'minimumbid': prize.minimumbid}
+        return result
+
+    prizesArray = [prize_info(o) for o in prizes.all()]
+
+    return render(
+        request,
+        'tracker_ui/index.html',
+        dictionary={
+            'event': event,
+            'events': Event.objects.all(),
+            'bundle': bundle.donate,
+            'root_path': reverse('tracker_ui:index'),
+            'app': 'DonateApp',
+            'props': mark_safe(json.dumps({
+                'prizes': prizesArray,
+                'incentives': bidsArray,
+                'donateUrl': request.get_full_path(),
+            }, ensure_ascii=False, cls=serializers.json.DjangoJSONEncoder)),
+        },
+    )
