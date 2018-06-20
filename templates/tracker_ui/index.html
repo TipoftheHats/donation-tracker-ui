@@ -18,7 +18,10 @@
         window.{{ app }}(
           Object.assign(
             {{ props }},
-            {csrfToken: document.querySelector('input[name=csrfmiddlewaretoken]').value}
+            {
+              formErrors: {{ form_errors }},
+              csrfToken: document.querySelector('input[name=csrfmiddlewaretoken]').value,
+            }
           )
         );
       });
@@ -31,5 +34,17 @@
     <form>
         {% csrf_token %}
     </form>
+    <div style='display: none'>
+        {% for key, form in forms.items %}
+            {% if form %}
+                {% if form.management_form %}
+                    <table data-form='{{ key }}' data-form-type='management'>{{ form.management_form }}</table>
+                {% else %}
+                    <table data-form='{{ key }}'>{{ form }}</table>
+                {% endif %}
+                {% if form.empty_form %}<table data-form='{{ key }}' data-form-type='empty'>{{ form.empty_form }}</table>{% endif %}
+            {% endif %}
+        {% endfor %}
+    </div>
     <div id="container"></div>
 {% endblock %}

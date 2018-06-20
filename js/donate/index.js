@@ -5,10 +5,7 @@ import Donate from './donate';
 
 window.DonateApp = function(props) {
   ReactDOM.render(
-    <Donate
-      {...props}
-      csrfToken={window.csrfToken}
-    />,
+    <Donate {...props} />,
     document.getElementById('container')
   );
 }

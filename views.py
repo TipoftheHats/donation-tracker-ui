@@ -13,6 +13,7 @@ from webpack_manifest import webpack_manifest
 
 from tracker import filters, viewutil
 from tracker.models import Event
+from tracker.views.donateviews import process_form
 
 
 @csrf_protect
@@ -65,6 +66,11 @@ def donate(request, event):
         read_retry=None
     )
 
+    commentform, bidsform, prizesform = process_form(request, event)
+
+    if not bidsform:
+        return commentform
+
     def bid_parent_info(bid):
         if bid != None:
             return {'id': bid.id, 'name': bid.name, 'description': bid.description, 'parent': bid_parent_info(bid.parent), 'custom': bid.allowuseroptions}
@@ -103,6 +109,13 @@ def donate(request, event):
 
     prizesArray = [prize_info(o) for o in prizes.all()]
 
+    def to_json(value):
+        if hasattr(value, 'id'):
+            return value.id
+        return value
+
+    pickedIncentives = [{k: to_json(form.cleaned_data[k]) for k, v in form.fields.items()} for form in bidsform.forms if form.is_bound]
+
     return render(
         request,
         'tracker_ui/index.html',
@@ -112,9 +125,15 @@ def donate(request, event):
             'bundle': bundle.donate,
             'root_path': reverse('tracker_ui:index'),
             'app': 'DonateApp',
+            'forms': {'bidsform': bidsform, 'prizesform': prizesform},
+            'form_errors': mark_safe(json.dumps({
+                'commentform': json.loads(commentform.errors.as_json()),
+                'bidsform': bidsform.errors,
+            })),
             'props': mark_safe(json.dumps({
                 'prizes': prizesArray,
                 'incentives': bidsArray,
+                'initialIncentives': pickedIncentives,
                 'donateUrl': request.get_full_path(),
             }, ensure_ascii=False, cls=serializers.json.DjangoJSONEncoder)),
         },

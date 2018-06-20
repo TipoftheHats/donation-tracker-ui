@@ -5,13 +5,28 @@ import cn from 'classnames';
 
 import styles from './donate.css';
 
+const IncentiveProps = PropTypes.shape({
+  id: PropTypes.number.isRequired,
+  parent: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    name: PropTypes.string.isRequired,
+    custom: PropTypes.bool.isRequired,
+    description: PropTypes.string.isRequired,
+  }),
+  name: PropTypes.string.isRequired,
+  runname: PropTypes.string.isRequired,
+  amount: PropTypes.string.isRequired, // TODO: this and goal should be numbers but django seems to be serializing them as strings?
+  count: PropTypes.number.isRequired,
+  goal: PropTypes.string,
+  description: PropTypes.string.isRequired,
+  label: PropTypes.string.isRequired,
+});
+
 class Incentives extends React.PureComponent {
   static propTypes = {
     step: PropTypes.number.isRequired,
     total: PropTypes.number.isRequired,
-    incentives: PropTypes.arrayOf(PropTypes.shape({
-      id: PropTypes.number.isRequired,
-    })).isRequired,
+    incentives: PropTypes.arrayOf(IncentiveProps.isRequired).isRequired,
     addIncentive: PropTypes.func.isRequired,
   };
 
@@ -54,16 +69,17 @@ class Incentives extends React.PureComponent {
   }
 
   addIncentiveDisabled() {
-
+    return this.state.amount <= 0 || this.state.amount > this.props.total;
   }
 
   addIncentive = (e) => {
     e.preventDefault();
     this.props.addIncentive({
-      id: this.state.newOptionValue ? this.state.selected.id : this.state.selectedChoice,
+      bid: (this.state.newOptionValue || !this.state.selectedChoice) ? this.state.selected.id : this.state.selectedChoice,
       amount: this.state.amount,
-      newOption: this.state.newOptionValue,
+      customoptionname: this.state.newOptionValue,
     });
+    this.setState({selected: null});
   };
 
   setChecked = key => {
@@ -80,6 +96,9 @@ class Incentives extends React.PureComponent {
 
   select = id => {
     return () => {
+      if (this.props.total === 0) {
+        return;
+      }
       const result = this.props.incentives.find(i => i.id === id);
       this.setState({
         selected: {...(result.parent || result), runname: result.runname},
@@ -164,7 +183,8 @@ class Incentives extends React.PureComponent {
               </React.Fragment> :
               null}
             <div>Amount to put towards incentive:</div>
-            <input value={amount} name='amount' type='number' step={step} max={total} onChange={this.setValue('amount')} />
+            <input value={amount} name='amount' type='number' step={step} min={0} max={total}
+                   onChange={this.setValue('amount')}/>
             <div>
               <button disabled={this.addIncentiveDisabled()} onClick={this.addIncentive}>ADD</button>
             </div>
@@ -180,26 +200,35 @@ class Donate extends React.PureComponent {
     incentives: PropTypes.arrayOf(PropTypes.shape({
       id: PropTypes.number.isRequired,
     }).isRequired).isRequired,
+    initialIncentives: PropTypes.arrayOf(PropTypes.shape({
+      bid: PropTypes.number.isRequired,
+      amount: PropTypes.string.isRequired,
+      customoptionname: PropTypes.string.isRequired,
+    }).isRequired).isRequired,
     step: PropTypes.number.isRequired,
     minimumDonation: PropTypes.number.isRequired,
     maximumDonation: PropTypes.number.isRequired,
     showPrizes: PropTypes.bool.isRequired,
     donateUrl: PropTypes.string.isRequired,
+    csrfToken: PropTypes.string,
   };
 
   static defaultProps = {
     step: 0.01,
+    initialAskIncentives: false,
+    initialShowIncentives: true,
     minimumDonation: 5,
     maximumDonation: 10000,
     showPrizes: true,
+    initialIncentives: [],
   };
 
   state = {
-    askIncentives: false,
-    showIncentives: true,
-    currentIncentives: [],
-    preferredName: '',
-    preferredEmail: '',
+    askIncentives: this.props.initialAskIncentives,
+    showIncentives: this.props.initialShowIncentives,
+    currentIncentives: this.props.initialIncentives,
+    requestedalias: '',
+    requestedemail: '',
     amount: 5,
   };
 
@@ -217,15 +246,22 @@ class Donate extends React.PureComponent {
   };
 
   addIncentive_ = (incentive) => {
-    console.log(incentive);
+    this.setState({currentIncentives: this.state.currentIncentives.concat([incentive])});
   };
+
+  componentWillMount() {
+    this.bidsformmanagement = Array.from(document.querySelector('table[data-form=bidsform][data-form-type=management]').querySelectorAll('input')).filter(i => i.id);
+    this.bidsformempty = Array.from(document.querySelector('table[data-form=bidsform][data-form-type=empty]').querySelectorAll('input')).filter(i => i.id);
+    this.prizesform = Array.from(document.querySelector('table[data-form=prizesform]').querySelectorAll('input')).filter(i => i.id);
+  }
 
   render() {
     const {
       askIncentives,
       showIncentives,
-      preferredName,
-      preferredEmail,
+      currentIncentives,
+      requestedalias,
+      requestedemail,
       amount,
     } = this.state;
     const {
@@ -235,23 +271,27 @@ class Donate extends React.PureComponent {
       showPrizes,
       donateUrl,
       incentives,
+      csrfToken,
     } = this.props;
     return (
       <form className={styles['donationForm']} action={donateUrl} method='post'>
+        <input type='hidden' name='csrfmiddlewaretoken' value={csrfToken}/>
         <div className={styles['donation']}>
           <div className={cn(styles['cubano'], styles['thankyou'])}>THANK YOU</div>
           <div className={cn(styles['cubano'], styles['fordonation'])}>FOR YOUR DONATION</div>
           <div>100% of your donation goes directly to {'{{CHARITY}}'}.</div>
           <div>
+            <input type='hidden' name='requestedvisibility' value={requestedalias ? 'ALIAS' : 'ANON'}/>
             <input className={styles['preferredNameInput']} placeholder='Preferred Name/Alias' type='text'
-                   name='requestedalias' value={preferredName}
-                   onChange={this.setValue('preferredName')}/>
+                   name='requestedalias' value={requestedalias}
+                   onChange={this.setValue('requestedalias')}/>
             <div>(Leave blank for Anonymous)</div>
           </div>
           <div>
+            <input type='hidden' name='requestedsolicitemail' value='CURR'/>
             <input className={styles['preferredEmailInput']} placeholder='Email Address' type='email'
-                   name='requestedemail' value={preferredEmail}
-                   onChange={this.setValue('preferredEmail')}/>
+                   name='requestedemail' value={requestedemail}
+                   onChange={this.setValue('requestedemail')}/>
             <div>(Click here for our privacy policy)</div>
           </div>
           <div className={styles['donationArea']}>
@@ -311,12 +351,36 @@ class Donate extends React.PureComponent {
           :
           <React.Fragment>
             {showIncentives ?
-              <Incentives incentives={incentives} step={step} total={amount} addIncentive={() => {}} /> :
+              <Incentives incentives={incentives} step={step} total={amount - currentIncentives.reduce((sum, ci) => sum + ci.amount, 0)} addIncentive={this.addIncentive_}/> :
               null
             }
             <button type='submit'>FINISH</button>
           </React.Fragment>
         }
+        <React.Fragment>
+          {this.bidsformmanagement.map(i => <input key={i.id} id={i.id} name={i.name} value={i.name.includes('TOTAL_FORMS') ? currentIncentives.length : i.value} type='hidden'/>)}
+        </React.Fragment>
+        <React.Fragment>
+          {this.prizesform.map(i => <input key={i.id} id={i.id} name={i.name} value={i.value} type='hidden'/>)}
+        </React.Fragment>
+        <React.Fragment>
+          {currentIncentives.map((ci, k) =>
+            <React.Fragment key={ci.bid}>
+              {this.bidsformempty.map(i =>
+              <input
+                key={i.name.replace('__prefix__', k)}
+                id={i.id.replace('__prefix__', k)}
+                name={i.name.replace('__prefix__', k)}
+                type='hidden'
+                value={ci[i.name.split('-').slice(-1)[0]]}
+              />
+            )}
+              <div>Bid: {incentives.find(i => i.id === ci.bid).name}</div>
+              <div>Amount: {ci.amount}</div>
+              <div>New: {ci.customoptionname}</div>
+            </React.Fragment>
+          )}
+        </React.Fragment>
       </form>
     );
   }
