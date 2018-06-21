@@ -2,10 +2,13 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import Donate from './donate';
+import ErrorBoundary from '../public/errorBoundary';
 
 window.DonateApp = function(props) {
   ReactDOM.render(
-    <Donate {...props} />,
+    <ErrorBoundary>
+      <Donate {...props} />
+    </ErrorBoundary>,
     document.getElementById('container')
   );
 }

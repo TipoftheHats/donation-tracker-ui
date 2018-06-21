@@ -289,6 +289,15 @@ class Donate extends React.PureComponent {
     this.setState({currentIncentives: newIncentives});
   };
 
+  deleteIncentive_ = (i) => {
+    return e => {
+      const {
+        currentIncentives,
+      } = this.state;
+      this.setState({currentIncentives: currentIncentives.slice(0, i).concat(currentIncentives.slice(i + 1))});
+    }
+  };
+
   sumIncentives_() {
     return this.state.currentIncentives.reduce((sum, ci) => sum + parseFloat(ci.amount), 0);
   }
@@ -434,7 +443,7 @@ class Donate extends React.PureComponent {
         </React.Fragment>
         <React.Fragment>
           {currentIncentives.map((ci, k) =>
-            <React.Fragment key={ci.bid}>
+            <div key={ci.bid} onClick={this.deleteIncentive_(k)}>
               {this.bidsformempty.map(i =>
               <input
                 key={i.name.replace('__prefix__', k)}
@@ -447,7 +456,7 @@ class Donate extends React.PureComponent {
               <div>Bid: {incentives.find(i => i.id === ci.bid) ? incentives.find(i => i.id === ci.bid).name : formErrors.bidsform[k].bid}</div>
               <div>Amount: {ci.amount}</div>
               <div>New: {ci.customoptionname}</div>
-            </React.Fragment>
+            </div>
           )}
         </React.Fragment>
       </form>

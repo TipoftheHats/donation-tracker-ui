@@ -138,6 +138,7 @@ def donate(request, event):
                 'initialIncentives': pickedIncentives,
                 'donateUrl': request.get_full_path(),
                 'prizesUrl': request.build_absolute_uri(reverse('tracker:prizeindex', args=(event.id,))),
+                'rulesUrl': 'https://gamesdonequick.com/sweepstakes',  # TODO: put in settings?
             }, ensure_ascii=False, cls=serializers.json.DjangoJSONEncoder)),
         },
     )
