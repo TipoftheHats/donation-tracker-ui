@@ -3,6 +3,24 @@
   margin: auto;
 }
 
+:local(.donationForm) button {
+  border-radius: 5px;
+  border: 1px solid #5E0324;
+  background-color: white;
+  color: #5E0324;
+}
+
+:local(.donationForm button.inverse),
+:local(.donationForm button.selected) {
+  background-color: #5E0324;
+  color: white;
+}
+
+:local(.donationForm button.inverse):disabled {
+  background-color: #DD82A3;
+  border-color: #DD82A3;
+}
+
 :local(.thankyou) {
   font-size: 70px;
 }

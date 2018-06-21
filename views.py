@@ -114,7 +114,7 @@ def donate(request, event):
             return value.id
         return value
 
-    pickedIncentives = [{k: to_json(form.cleaned_data[k]) for k, v in form.fields.items()} for form in bidsform.forms if form.is_bound]
+    pickedIncentives = [{k: to_json(form.cleaned_data[k]) for k, v in form.fields.items() if k in form.cleaned_data} for form in bidsform.forms if form.is_bound]
 
     return render(
         request,
@@ -131,10 +131,13 @@ def donate(request, event):
                 'bidsform': bidsform.errors,
             })),
             'props': mark_safe(json.dumps({
+                'event': json.loads(serializers.serialize('json', [event]))[0]['fields'],
                 'prizes': prizesArray,
                 'incentives': bidsArray,
+                'initialForm': {k: to_json(commentform.cleaned_data[k]) for k, v in commentform.fields.items() if commentform.is_bound and k in commentform.cleaned_data},
                 'initialIncentives': pickedIncentives,
                 'donateUrl': request.get_full_path(),
+                'prizesUrl': request.build_absolute_uri(reverse('tracker:prizeindex', args=(event.id,))),
             }, ensure_ascii=False, cls=serializers.json.DjangoJSONEncoder)),
         },
     )
