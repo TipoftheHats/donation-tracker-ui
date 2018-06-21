@@ -303,10 +303,20 @@ class Donate extends React.PureComponent {
   }
 
   finishDisabled_() {
-    if (this.sumIncentives_() > this.state.amount) {
+    const {
+      amount,
+      currentIncentives,
+    } = this.state;
+    const {
+      incentives,
+    } = this.props;
+    if (this.sumIncentives_() > amount) {
       return 'Total bid amount cannot exceed donation amount.';
     }
-    if (this.state.currentIncentives.length > 10) {
+    if (currentIncentives.some(ci => !incentives.find(i => i.id === ci.bid))) {
+      return 'At least one incentive is no longer valid.';
+    }
+    if (currentIncentives.length > 10) {
       return 'Too many incentives.';
     }
     return null;
