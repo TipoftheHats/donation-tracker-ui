@@ -415,13 +415,13 @@ class Donate extends React.PureComponent {
           <div className={cn(styles['cubano'], styles['thankyou'])}>THANK YOU</div>
           <div className={cn(styles['cubano'], styles['fordonation'])}>FOR YOUR DONATION</div>
           <div className={styles['hundred']}>100% of your donation goes directly to {event.receivername}.</div>
-          <div>
+          <div className={styles['biginput']}>
             <input type='hidden' name='requestedvisibility' value={requestedalias ? 'ALIAS' : 'ANON'}/>
             <input className={cn(styles['underline'], styles['preferredNameInput'])} placeholder='Preferred Name/Alias'
                    type='text' name='requestedalias' value={requestedalias} onChange={this.setValue('requestedalias')}/>
             <div>(Leave blank for Anonymous)</div>
           </div>
-          <div>
+          <div className={styles['biginput']}>
             <input className={cn(styles['underline'], styles['preferredEmailInput'])} placeholder='Email Address'
                    type='email' name='requestedemail' value={requestedemail} onChange={this.setValue('requestedemail')}/>
             <div>(Click <a className={cn('block-external', styles['privacy'])} href='https://gamesdonequick.com/privacy/' target='_blank' rel='noopener noreferrer'>here</a> for our privacy policy)</div>
@@ -472,7 +472,7 @@ class Donate extends React.PureComponent {
               null}
           </div>
           <div className={styles['commentArea']}>
-            <div>(OPTIONAL) LEAVE A COMMENT?</div>
+            <div className={styles['cubano']}>(OPTIONAL) LEAVE A COMMENT?</div>
             <textarea className={styles['commentInput']} placeholder='Enter Comment Here'
                       name='comment' maxLength={5000}/>
             <label htmlFor='comment'>Please refrain from offensive language or hurtful remarks. All donation comments
@@ -482,7 +482,7 @@ class Donate extends React.PureComponent {
         </div>
         {askIncentives ?
           <div className={styles['incentivesCTA']}>
-            <div className={styles['header']}>DONATION INCENTIVES</div>
+            <div className={styles['cubano']}>DONATION INCENTIVES</div>
             <div>Donation incentives can be used to add bonus runs to the schedule or influence choices by runners. Do
               you wish to put your donation towards an incentive?
             </div>
@@ -514,10 +514,12 @@ class Donate extends React.PureComponent {
               /> :
               null
             }
-            <button className={cn(styles['finish'], styles['inverse'], styles['cubano'])} id='finish'
+            <div className={styles['finishArea']}>
+              <button className={cn(styles['finish'], styles['inverse'], styles['cubano'])} id='finish'
                     disabled={this.finishDisabled_()} type='submit'>FINISH
-            </button>
-            {finishDisabled && <label htmlFor='finish' className='error'>{finishDisabled}</label>}
+              </button>
+              {finishDisabled && <label htmlFor='finish' className='error'>{finishDisabled}</label>}
+            </div>
           </React.Fragment>
         }
         <React.Fragment>
