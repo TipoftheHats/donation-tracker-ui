@@ -106,6 +106,8 @@ def donate(request, event):
             result['runname'] = bid.speedrun.name
         else:
             result['runname'] = 'Event Wide'
+        if bid.allowuseroptions:
+            result['custom'] = True
         return result
 
     bids = filters.run_model_query('bidtarget',
@@ -143,6 +145,7 @@ def donate(request, event):
             'bundle': bundle.donate,
             'root_path': reverse('tracker_ui:index'),
             'app': 'DonateApp',
+            'title': 'Donate',
             'forms': {'bidsform': bidsform, 'prizesform': prizesform},
             'form_errors': mark_safe(json.dumps({
                 'commentform': json.loads(commentform.errors.as_json()),

@@ -57,15 +57,19 @@ class Incentives extends React.PureComponent {
 
   matchResults_() {
     const search = this.state.search.toLowerCase();
-    return _.uniqBy(this.props.incentives.filter(i => {
-      return (i.parent ? i.parent.name : i.name).toLowerCase().includes(search)
-        || (i.runname && i.runname.toLowerCase().includes(search));
-    }).map(i => ({
+    let {incentives} = this.props;
+    if (search) {
+      incentives = incentives.filter(i => {
+        return (i.parent ? i.parent.name : i.name).toLowerCase().includes(search)
+          || (i.runname && i.runname.toLowerCase().includes(search));
+      });
+    }
+    incentives = incentives.map(i => ({
       id: i.id,
       run: i.runname,
       name: i.parent ? i.parent.name : i.name
-    })), i => `${i.run}--${i.name}`)
-      .slice(0, 7);
+    }));
+    return _.uniqBy(incentives, i => `${i.run}--${i.name}`);
   }
 
   addIncentiveDisabled_() {
@@ -111,7 +115,7 @@ class Incentives extends React.PureComponent {
       const result = incentives.find(i => i.id === id);
       this.setState({
         selected: {...(result.parent || result), runname: result.runname},
-        choices: result.parent && incentives.filter(i => _.isEqual(i.parent, result.parent)),
+        choices: result.parent ? incentives.filter(i => i.parent && i.parent.id === result.parent.id) : incentives.filter(i => i.parent && i.parent.id === result.id),
         newOption: false,
         newOptionValue: '',
         selectedChoice: null,
@@ -139,21 +143,15 @@ class Incentives extends React.PureComponent {
       <div className={styles['incentives']}>
         <div className={styles['left']}>
           <div className={styles['searches']}>
-            <input className={styles['search']} value={search} onChange={this.setValue('search')} placeholder='filter'/>
+            <input className={styles['search']} value={search} onChange={this.setValue('search')} placeholder='Filter Results'/>
             <div className={styles['results']}>
               {
-                search ?
-                  <React.Fragment>
-                    {
-                      this.matchResults_().map(result =>
-                        <div className={styles['result']} key={result.id} onClick={this.select(result.id)}>
-                          <div className={styles['resultRun']}>{result.run}</div>
-                          <div className={styles['resultName']}>{result.name}</div>
-                        </div>
-                      )
-                    }
-                  </React.Fragment> :
-                  null
+                this.matchResults_().map(result =>
+                  <div className={styles['result']} key={result.id} onClick={this.select(result.id)}>
+                    <div className={styles['resultRun']}>{result.run}</div>
+                    <div className={styles['resultName']}>{result.name}</div>
+                  </div>
+                )
               }
             </div>
           </div>
@@ -197,11 +195,13 @@ class Incentives extends React.PureComponent {
                    onChange={this.setValue('amount')} placeholder='Enter Here'/>
             <label htmlFor='new_amount'>You have ${total} remaining.</label>
             <div>
-              <button className={styles['inverse']} id='add' disabled={addIncentiveDisabled} onClick={this.addIncentive}>ADD</button>
+              <button className={styles['inverse']} id='add' disabled={addIncentiveDisabled}
+                      onClick={this.addIncentive}>ADD
+              </button>
               {addIncentiveDisabled && <label htmlFor='add' className='error'>{addIncentiveDisabled}</label>}
             </div>
           </div> :
-          null}
+          <div>You have ${total} remaining.</div>}
       </div>
     );
   }
@@ -377,10 +377,17 @@ class Donate extends React.PureComponent {
             Do you want to receive emails from {event.receivername}?
           </div>
           <div>
-            <input type='hidden' name='requestedsolicitemail' value={requestedsolicitemail} />
-            <button className={cn({[styles['selected']]: requestedsolicitemail === 'YES'})} disabled={requestedsolicitemail === 'YES'} onClick={this.setEmail('YES')}>Yes</button>
-            <button className={cn({[styles['selected']]: requestedsolicitemail === 'NO'})} disabled={requestedsolicitemail === 'NO'} onClick={this.setEmail('NO')}>No</button>
-            <button className={cn({[styles['selected']]: requestedsolicitemail === 'CURR'})} disabled={requestedsolicitemail === 'CURR'} onClick={this.setEmail('CURR')}>Use Existing Preference (No if not already set)</button>
+            <input type='hidden' name='requestedsolicitemail' value={requestedsolicitemail}/>
+            <button className={cn({[styles['selected']]: requestedsolicitemail === 'YES'})}
+                    disabled={requestedsolicitemail === 'YES'} onClick={this.setEmail('YES')}>Yes
+            </button>
+            <button className={cn({[styles['selected']]: requestedsolicitemail === 'NO'})}
+                    disabled={requestedsolicitemail === 'NO'} onClick={this.setEmail('NO')}>No
+            </button>
+            <button className={cn({[styles['selected']]: requestedsolicitemail === 'CURR'})}
+                    disabled={requestedsolicitemail === 'CURR'} onClick={this.setEmail('CURR')}>Use Existing Preference
+              (No if not already set)
+            </button>
           </div>
           <div className={styles['donationArea']}>
             <div className={styles['donationAmount']}>
@@ -439,15 +446,19 @@ class Donate extends React.PureComponent {
           :
           <React.Fragment>
             {showIncentives ?
-              <Incentives errors={formErrors.bidsform} incentives={incentives} step={step} total={amount - this.sumIncentives_()} addIncentive={this.addIncentive_}/> :
+              <Incentives errors={formErrors.bidsform} incentives={incentives} step={step}
+                          total={amount - this.sumIncentives_()} addIncentive={this.addIncentive_}/> :
               null
             }
-            <button className={styles['inverse']} id='finish' disabled={this.finishDisabled_()} type='submit'>FINISH</button>
+            <button className={styles['inverse']} id='finish' disabled={this.finishDisabled_()} type='submit'>FINISH
+            </button>
             {finishDisabled && <label htmlFor='finish' className='error'>{finishDisabled}</label>}
           </React.Fragment>
         }
         <React.Fragment>
-          {this.bidsformmanagement.map(i => <input key={i.id} id={i.id} name={i.name} value={i.name.includes('TOTAL_FORMS') ? currentIncentives.length : i.value} type='hidden'/>)}
+          {this.bidsformmanagement.map(i => <input key={i.id} id={i.id} name={i.name}
+                                                   value={i.name.includes('TOTAL_FORMS') ? currentIncentives.length : i.value}
+                                                   type='hidden'/>)}
         </React.Fragment>
         <React.Fragment>
           {this.prizesform.map(i => <input key={i.id} id={i.id} name={i.name} value={i.value} type='hidden'/>)}
@@ -456,14 +467,14 @@ class Donate extends React.PureComponent {
           {currentIncentives.map((ci, k) =>
             <div key={ci.bid} onClick={this.deleteIncentive_(k)}>
               {this.bidsformempty.map(i =>
-              <input
-                key={i.name.replace('__prefix__', k)}
-                id={i.id.replace('__prefix__', k)}
-                name={i.name.replace('__prefix__', k)}
-                type='hidden'
-                value={ci[i.name.split('-').slice(-1)[0]]}
-              />
-            )}
+                <input
+                  key={i.name.replace('__prefix__', k)}
+                  id={i.id.replace('__prefix__', k)}
+                  name={i.name.replace('__prefix__', k)}
+                  type='hidden'
+                  value={ci[i.name.split('-').slice(-1)[0]]}
+                />
+              )}
               <div>Bid: {incentives.find(i => i.id === ci.bid) ? incentives.find(i => i.id === ci.bid).name : formErrors.bidsform[k].bid}</div>
               <div>Amount: {ci.amount}</div>
               <div>New: {ci.customoptionname}</div>

@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 
+{% block title %}
+    {{ event.name|title }}{% if title %} -- {{ title }}{% endif %}
+{% endblock %}
+
 {% block head %}
     {{ bundle.js|safe }}
     {{ bundle.css|safe }}

@@ -105,12 +105,17 @@
   border-bottom: 1px solid #5E0324;
 }
 
+:local(.results) {
+  height: 224px;
+  overflow-y: auto;
+}
+
 :local(.result) {
   color: #5E0324;
   height: 32px;
 }
 
-:local(.result):nth-of-type(2) {
+:local(.result):nth-of-type(2n) {
   background-color: rgba(94, 3, 36, 0.1);
 }
 

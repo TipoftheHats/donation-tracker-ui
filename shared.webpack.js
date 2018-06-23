@@ -60,7 +60,7 @@ module.exports = function (opts = {}) {
     externals: keyMirror(packageJSON.dependencies),
     devServer: {
       proxy: [{
-        context: ['/admin', '/logout', '/api', '/ui', '/static', '/tracker'],
+        context: ['/admin', '/logout', '/api', '/ui', '/static', '/tracker', '/donate'],
         target: 'http://localhost:8000/',
         headers: {'X-Webpack': 1},
       }],
