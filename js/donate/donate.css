@@ -1,6 +1,17 @@
 :local(.donationForm) {
   font-family: museo-sans,"Helvetica Neue",Helvetica,Arial,sans-serif;
   margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 720px;
+  color: #5E0324;
+}
+
+:local(.donationForm) input:local(.underline) {
+  border-bottom: 2px;
+  border-bottom-style: solid;
+  border-color: #5E0324;
 }
 
 :local(.donationForm) button {
@@ -29,8 +40,19 @@
   font-size: 35px;
 }
 
+:local(.hundred) {
+  font-size: 15px;
+  line-height: 40px;
+}
+
 :local(.donationForm .cubano) {
   font-family: Cubano,futura-pt,museo-sans,"Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
+:local(.donation) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 :local(.donation) input {
@@ -41,27 +63,109 @@
   font-family: museo-sans,"Helvetica Neue",Helvetica,Arial,sans-serif;
   line-height: normal;
   font-size: 36px;
+  width: 525px;
 }
 
 :local(.preferredEmailInput) {
   font-family: museo-sans,"Helvetica Neue",Helvetica,Arial,sans-serif;
   line-height: normal;
   font-size: 36px;
+  width: 525px;
+}
+
+:local(.emailCTA) {
+  width: 100%;
+  margin-top: 11px;
+  margin-bottom: 4px;
+  margin-left: 4px;
+  font-size: 14px;
+  line-height: 16px;
+  text-align: left;
+}
+
+:local(.emailButtons) {
+  display: flex;
+  flex-grow: 1;
+  flex-shrink: 0;
+  width: 100%;
+  justify-content: space-between;
+}
+
+:local(.emailButtons) button {
+  width: 356px;
+}
+
+:local(.emailButtons) button:not(:last-of-type) {
+  width: 80px;
+  margin-right: 5px;
+}
+
+:local(.emailButtons) button {
+  height: 30px;
+  font-size: 15px;
 }
 
 :local(.amountInput) {
   font-family: Museo Sans;
   line-height: normal;
   font-size: 24px;
+  width: 239px;
+}
+
+:local(.donationCTA) {
+  text-align: center;
 }
 
 :local(.donationArea) {
+  margin-top: 40px;
   display: flex;
   flex-direction: row;
 }
 
 :local(.donationAmount:before) {
   content: '$';
+}
+
+:local(.prizeInfo) {
+  margin-left: 20px;
+  margin-bottom: 39px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+:local(.prizeInfo .cta) {
+  width: 256px;
+  padding: 12px;
+  text-align: center;
+}
+
+:local(.prizeInfo) a {
+  border: 1px solid #5E0324;
+  border-radius: 5px;
+  width: 256px;
+  height: 44px;
+  margin-top: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+:local(.commentArea) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+:local(.commentArea) label {
+  max-width: 525px;
+  text-align: left;
+  font-size: 12px;
+  line-height: 14px;
+  margin-top: 4px;
 }
 
 :local(.commentInput) {
@@ -81,11 +185,84 @@
 :local(.buttons) button {
   flex-grow: 1;
   flex-shrink: 0;
+  margin-bottom: 5px;
+}
+
+:local(.buttons) button:not(:last-of-type) {
+  margin-right: 5px;
+}
+
+:local(.incentivesButtons) button {
+  width: 249px;
+  height: 42px;
+  font-size: 18px;
+  margin-top: 20px;
+}
+
+:local(.incentivesButtons) button:first-of-type {
+  margin-right: 27px;
+}
+
+:local(.incentivesCTA) {
+  text-align: center;
+  font-size: 16px;
+  margin-bottom: 60px;
+}
+
+:local(.incentivesCTA .header) {
+  font-size: 24px;
 }
 
 :local(.incentives) {
   display: flex;
   flex-direction: row;
+  margin-bottom: 15px;
+}
+
+:local(.incentives .right) {
+  margin-left: 17px;
+  width: 425px;
+}
+
+:local(.incentives .right) input[type=text] {
+  width: 356px;
+  border: none;
+  border-bottom: 2px;
+  border-bottom-style: solid;
+  border-color: #5E0324;
+  margin-bottom: 17px;
+}
+
+:local(.incentives .right) input[type=number] {
+  border: none;
+  border-bottom: 2px;
+  border-bottom-style: solid;
+  border-color: #5E0324;
+  font-size: 30px;
+}
+
+:local(.incentives .right .amount):before {
+  content: '$';
+}
+
+:local(.incentives .right .runname) {
+  font-size: 32px;
+}
+
+:local(.incentives .right .name) {
+  font-size: 18px;
+}
+
+:local(.incentives .right .description) {
+  font-size: 12px;
+  margin-bottom: 16px;
+}
+
+:local(.incentives .right button.add) {
+  width: 249px;
+  height: 43px;
+  margin-top: 18px;
+  font-size: 18px;
 }
 
 :local(.searches) {
@@ -113,6 +290,7 @@
 :local(.result) {
   color: #5E0324;
   height: 32px;
+  padding-left: 9px;
 }
 
 :local(.result):nth-of-type(2n) {
@@ -129,4 +307,70 @@
   font-weight: 500;
   line-height: 10px;
   font-size: 10px;
+}
+
+:local(.assigned .header) {
+  text-align: center;
+  width: 100%;
+  margin-top: 29px;
+  margin-bottom: 6px;
+  font-size: 18px;
+}
+
+:local(.assigned .item) {
+  width: 218px;
+  border-radius: 5px;
+  border: 1px solid #5E0324;
+  padding: 6px;
+  margin-bottom: 10px;
+  position: relative;
+}
+
+:local(.assigned .item .delete) {
+  visibility: hidden;
+  position: absolute;
+  top: 30%;
+  left: 60px;
+}
+
+:local(.assigned .item):hover {
+  background-color: rgba(94, 3, 36, 0.75);
+}
+
+:local(.assigned .item):hover :local(.delete) {
+  visibility: initial;
+}
+
+:local(.assigned .item .runname) {
+  font-size: 18px;
+}
+
+:local(.assigned .item div:not(.runname)) {
+  padding-left: 18px;
+  font-size: 12px;
+}
+
+:local(.choice) {
+  width: 425px;
+  height: 40px;
+  padding: 4px 12px;
+  line-height: 32px;
+}
+
+:local(.choice) label {
+  margin: 0;
+}
+
+:local(.choice):nth-of-type(2n+1) {
+  background-color: rgba(94, 3, 36, 0.1);
+}
+
+:local(.amountCTA) {
+  margin-top: 18px;
+}
+
+:local(.finish) {
+  width: 218px;
+  height: 70px;
+  font-size: 18px;
 }
