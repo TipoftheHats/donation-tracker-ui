@@ -50,7 +50,20 @@ def admin(request):
         read_retry=None
     )
 
-    return render(request, 'tracker_ui/index.html', dictionary={'event': Event.objects.latest(), 'events': Event.objects.all(), 'bundle': bundle.admin, 'root_path': reverse('tracker_ui:admin')})
+    return render(
+        request,
+        'tracker_ui/index.html',
+        dictionary={
+            'event': Event.objects.latest(),
+            'events': Event.objects.all(),
+            'bundle': bundle.admin,
+            'root_path': reverse('tracker_ui:admin'),
+            'app': 'AdminApp',
+            'form_errors': {},
+            'props': mark_safe(json.dumps({}, ensure_ascii=False, cls=serializers.json.DjangoJSONEncoder)),
+        },
+    )
+
 
 @csrf_protect
 def donate(request, event):
@@ -73,7 +86,8 @@ def donate(request, event):
 
     def bid_parent_info(bid):
         if bid != None:
-            return {'id': bid.id, 'name': bid.name, 'description': bid.description, 'parent': bid_parent_info(bid.parent), 'custom': bid.allowuseroptions}
+            return {'id': bid.id, 'name': bid.name, 'description': bid.description,
+                    'parent': bid_parent_info(bid.parent), 'custom': bid.allowuseroptions}
         else:
             return None
 
@@ -97,7 +111,7 @@ def donate(request, event):
     bids = filters.run_model_query('bidtarget',
                                    {'state': 'OPENED', 'event': event.id},
                                    user=request.user) \
-        .distinct().select_related('parent','speedrun').prefetch_related('suggestions')
+        .distinct().select_related('parent', 'speedrun').prefetch_related('suggestions')
 
     prizes = filters.run_model_query('prize', {'feed': 'current', 'event': event.id})
 
@@ -114,7 +128,11 @@ def donate(request, event):
             return value.id
         return value
 
-    pickedIncentives = [{k: to_json(form.cleaned_data[k]) for k, v in form.fields.items() if k in form.cleaned_data} for form in bidsform.forms if form.is_bound]
+    pickedIncentives = [{k: to_json(form.cleaned_data[k]) for k, v in form.fields.items() if k in form.cleaned_data}
+                        for form in bidsform.forms if form.is_bound]
+
+    initialForm = {k: to_json(commentform.cleaned_data[k]) for k, v in commentform.fields.items() if
+                   commentform.is_bound and k in commentform.cleaned_data}
 
     return render(
         request,
@@ -134,7 +152,7 @@ def donate(request, event):
                 'event': json.loads(serializers.serialize('json', [event]))[0]['fields'],
                 'prizes': prizesArray,
                 'incentives': bidsArray,
-                'initialForm': {k: to_json(commentform.cleaned_data[k]) for k, v in commentform.fields.items() if commentform.is_bound and k in commentform.cleaned_data},
+                'initialForm': initialForm,
                 'initialIncentives': pickedIncentives,
                 'donateUrl': request.get_full_path(),
                 'prizesUrl': request.build_absolute_uri(reverse('tracker:prizeindex', args=(event.id,))),
