@@ -33,7 +33,7 @@ module.exports = {
     }),
     PROD && new webpack.optimize.UglifyJsPlugin({comments: false}),
   ]),
-  devServer: PROD ? null : sharedConfig.devServer,
+  devServer: PROD ? {} : sharedConfig.devServer,
   resolve: sharedConfig.resolve,
   devtool: PROD ? 'source-map' : 'eval-source-map',
 };
