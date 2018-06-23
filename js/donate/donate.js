@@ -214,7 +214,8 @@ class Incentives extends React.PureComponent {
                   <label htmlFor='custom'>Nominate a new option!</label>
                 </div>
                 <div>
-                  <input className={styles['underline']}  value={newOptionValue} disabled={!newOption} type='text' name='newOptionValue'
+                  <input className={styles['underline']} value={newOptionValue} disabled={!newOption} type='text'
+                         name='newOptionValue'
                          onChange={this.setValue('newOptionValue')} placeholder='Enter Here'/>
                 </div>
               </React.Fragment> :
@@ -235,7 +236,8 @@ class Incentives extends React.PureComponent {
               null}
             <div className={styles['amountCTA']}>Amount to put towards incentive:</div>
             <div className={styles['amount']}>
-              <input className={styles['underline']} value={amount} name='new_amount' type='number' step={step} min={0} max={total}
+              <input className={styles['underline']} value={amount} name='new_amount' type='number' step={step} min={0}
+                     max={total}
                      onChange={this.setValue('amount')} placeholder='Enter Here'/>
               <label htmlFor='new_amount'>You have ${total} remaining.</label>
             </div>
@@ -277,8 +279,13 @@ class Donate extends React.PureComponent {
     step: PropTypes.number.isRequired,
     minimumDonation: PropTypes.number.isRequired,
     maximumDonation: PropTypes.number.isRequired,
-    showPrizes: PropTypes.bool.isRequired,
     donateUrl: PropTypes.string.isRequired,
+    prizes: PropTypes.arrayOf(PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      description: PropTypes.string,
+      minimumBid: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+    }).isRequired).isRequired,
     prizesUrl: PropTypes.string.isRequired,
     rulesUrl: PropTypes.string,
     csrfToken: PropTypes.string,
@@ -288,12 +295,10 @@ class Donate extends React.PureComponent {
     step: 0.01,
     minimumDonation: 5,
     maximumDonation: 10000,
-    showPrizes: true,
     initialIncentives: [],
   };
 
   state = {
-    askIncentives: this.props.initialIncentives.length === 0,
     showIncentives: this.props.initialIncentives.length !== 0,
     currentIncentives: this.props.initialIncentives || [],
     requestedalias: this.props.initialForm.requestedalias || '',
@@ -385,7 +390,6 @@ class Donate extends React.PureComponent {
 
   render() {
     const {
-      askIncentives,
       showIncentives,
       currentIncentives,
       requestedalias,
@@ -401,7 +405,7 @@ class Donate extends React.PureComponent {
       minimumDonation,
       maximumDonation,
       formErrors,
-      showPrizes,
+      prizes,
       donateUrl,
       incentives,
       csrfToken,
@@ -423,8 +427,12 @@ class Donate extends React.PureComponent {
           </div>
           <div className={styles['biginput']}>
             <input className={cn(styles['underline'], styles['preferredEmailInput'])} placeholder='Email Address'
-                   type='email' name='requestedemail' value={requestedemail} onChange={this.setValue('requestedemail')}/>
-            <div>(Click <a className={cn('block-external', styles['privacy'])} href='https://gamesdonequick.com/privacy/' target='_blank' rel='noopener noreferrer'>here</a> for our privacy policy)</div>
+                   type='email' name='requestedemail' value={requestedemail}
+                   onChange={this.setValue('requestedemail')}/>
+            <div>(Click <a className={cn('block-external', styles['privacy'])}
+                           href='https://gamesdonequick.com/privacy/' target='_blank'
+                           rel='noopener noreferrer'>here</a> for our privacy policy)
+            </div>
           </div>
           <div className={styles['emailCTA']}>
             Do you want to receive emails from {event.receivername}?
@@ -444,7 +452,8 @@ class Donate extends React.PureComponent {
           </div>
           <div className={styles['donationArea']}>
             <div className={styles['donationAmount']}>
-              <input className={cn(styles['underline'], styles['amountInput'])} placeholder='Enter Amount' type='number' name='amount'
+              <input className={cn(styles['underline'], styles['amountInput'])} placeholder='Enter Amount' type='number'
+                     name='amount'
                      value={amount} step={step} min={minimumDonation} max={maximumDonation}
                      onChange={this.setValue('amount')}/>
               <div className={styles['buttons']}>
@@ -459,14 +468,27 @@ class Donate extends React.PureComponent {
               </div>
               <div>(Minimum donation is ${minimumDonation})</div>
             </div>
-            {showPrizes ?
+            {prizes.length ?
               <div className={styles['prizeInfo']}>
                 <div className={styles['cta']}>Donations can enter you to win prizes!</div>
-                <div><a className='block-external' href={prizesUrl} target='_blank' rel='noopener noreferrer'>Current prize list (New tab)</a></div>
+                <div className={styles['prizeList']}>
+                  <div className={styles['header']}>CURRENT PRIZE LIST:</div>
+                  {prizes.map(prize =>
+                    <div className={styles['item']}>
+                      <div className={cn(styles['name'], styles['cubano'])}>{prize.name}</div>
+                      <div className={styles['bidinfo']}>${prize.minimumbid} {prize.sumdonations ? 'Total Donations' : 'Minimum Single Donation'}</div>
+                    </div>
+                  )}
+                </div>
+                <div><a className='block-external' href={prizesUrl} target='_blank' rel='noopener noreferrer'>Current
+                  prize list (New tab)</a></div>
                 {rulesUrl ?
                   <React.Fragment>
-                    <div><a className='block-external' href={rulesUrl} target='_blank' rel='noopener noreferrer'>Official Rules (New tab)</a></div>
-                    <div className={cn(styles['disclaimer'], styles['cta'])}>No donation necessary for a chance to win. See sweepstakes rules for details and instructions.</div>
+                    <div><a className='block-external' href={rulesUrl} target='_blank' rel='noopener noreferrer'>Official
+                      Rules (New tab)</a></div>
+                    <div className={cn(styles['disclaimer'], styles['cta'])}>No donation necessary for a chance to win.
+                      See sweepstakes rules for details and instructions.
+                    </div>
                   </React.Fragment> : null}
               </div> :
               null}
@@ -476,52 +498,57 @@ class Donate extends React.PureComponent {
             <textarea className={styles['commentInput']} placeholder='Enter Comment Here'
                       name='comment' maxLength={5000}/>
             <label htmlFor='comment'>Please refrain from offensive language or hurtful remarks. All donation comments
-              are
-              screened and will be removed from the website if deemed unacceptable.</label>
+              are screened and will be removed from the website if deemed unacceptable.</label>
           </div>
         </div>
-        {askIncentives ?
-          <div className={styles['incentivesCTA']}>
-            <div className={styles['cubano']}>DONATION INCENTIVES</div>
-            <div>Donation incentives can be used to add bonus runs to the schedule or influence choices by runners. Do
-              you wish to put your donation towards an incentive?
-            </div>
-            <div className={styles['incentivesButtons']}>
-              <button className={styles['inverse']} onClick={e => {
-                e.preventDefault();
-                this.setState({askIncentives: false, showIncentives: true});
-              }}>
-                YES!
-              </button>
-              <button className={styles['inverse']} onClick={e => {
-                e.preventDefault();
-                this.setState({askIncentives: false, showIncentives: false});
-              }}>NO, SKIP INCENTIVES
-              </button>
-            </div>
+        <div className={styles['incentivesCTA']}>
+          <div className={styles['cubano']}>DONATION INCENTIVES</div>
+          <div>Donation incentives can be used to add bonus runs to the schedule or influence choices by runners. Do
+            you wish to put your donation towards an incentive?
           </div>
-          :
+          <div className={styles['incentivesButtons']}>
+            <button
+              className={styles['inverse']}
+              disabled={showIncentives}
+              type='button'
+              onClick={() => {
+                this.setState({showIncentives: true});
+              }}>
+              YES!
+            </button>
+            <button
+              id='skip'
+              className={styles['inverse']}
+              disabled={showIncentives || this.finishDisabled_()}
+              type='submit'>
+              NO, SKIP INCENTIVES
+            </button>
+            {!showIncentives && finishDisabled && <label htmlFor='skip' className='error'>{finishDisabled}</label>}
+          </div>
+        </div>
+        {showIncentives ?
           <React.Fragment>
-            {showIncentives ?
-              <Incentives
-                step={step}
-                errors={formErrors.bidsform}
-                incentives={incentives}
-                currentIncentives={currentIncentives}
-                deleteIncentive={this.deleteIncentive_}
-                addIncentive={this.addIncentive_}
-                total={(amount || 0) - this.sumIncentives_()}
-              /> :
-              null
-            }
+            <Incentives
+              step={step}
+              errors={formErrors.bidsform}
+              incentives={incentives}
+              currentIncentives={currentIncentives}
+              deleteIncentive={this.deleteIncentive_}
+              addIncentive={this.addIncentive_}
+              total={(amount || 0) - this.sumIncentives_()}
+            />
             <div className={styles['finishArea']}>
-              <button className={cn(styles['finish'], styles['inverse'], styles['cubano'])} id='finish'
-                    disabled={this.finishDisabled_()} type='submit'>FINISH
+              <button
+                className={cn(styles['finish'], styles['inverse'], styles['cubano'])}
+                id='finish'
+                disabled={this.finishDisabled_()}
+                type='submit'>
+                FINISH
               </button>
               {finishDisabled && <label htmlFor='finish' className='error'>{finishDisabled}</label>}
             </div>
-          </React.Fragment>
-        }
+          </React.Fragment> :
+          null}
         <React.Fragment>
           {this.bidsformmanagement.map(i => <input key={i.id} id={i.id} name={i.name}
                                                    value={i.name.includes('TOTAL_FORMS') ? currentIncentives.length : i.value}

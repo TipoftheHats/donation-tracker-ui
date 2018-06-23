@@ -178,6 +178,34 @@
   color: #5E0324;
 }
 
+:local(.prizeList) {
+  border-radius: 5px;
+  border: 1px solid #5E0324;
+}
+
+:local(.prizeList .header) {
+  border-width: 0 0 1px 0;
+  border-style: solid;
+  border-color: #5E0324;
+  padding: 4px;
+}
+
+:local(.prizeList .item) {
+  padding: 4px;
+}
+
+:local(.prizeList div.item:nth-of-type(2n)) {
+  background-color: rgba(94, 3, 36, 0.1);
+}
+
+:local(.prizeList .item .name) {
+  font-size: 12px;
+}
+
+:local(.prizeList .item .bidinfo) {
+  font-size: 10px;
+}
+
 :local(.commentArea) {
   display: flex;
   flex-direction: column;
