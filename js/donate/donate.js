@@ -214,7 +214,7 @@ class Incentives extends React.PureComponent {
                   <label htmlFor='custom'>Nominate a new option!</label>
                 </div>
                 <div>
-                  <input value={newOptionValue} disabled={!newOption} type='text' name='newOptionValue'
+                  <input className={styles['underline']}  value={newOptionValue} disabled={!newOption} type='text' name='newOptionValue'
                          onChange={this.setValue('newOptionValue')} placeholder='Enter Here'/>
                 </div>
               </React.Fragment> :
@@ -235,7 +235,7 @@ class Incentives extends React.PureComponent {
               null}
             <div className={styles['amountCTA']}>Amount to put towards incentive:</div>
             <div className={styles['amount']}>
-              <input value={amount} name='new_amount' type='number' step={step} min={0} max={total}
+              <input className={styles['underline']} value={amount} name='new_amount' type='number' step={step} min={0} max={total}
                      onChange={this.setValue('amount')} placeholder='Enter Here'/>
               <label htmlFor='new_amount'>You have ${total} remaining.</label>
             </div>
@@ -357,6 +357,7 @@ class Donate extends React.PureComponent {
       showIncentives,
     } = this.state;
     const {
+      minimumDonation,
       incentives,
     } = this.props;
     if (this.sumIncentives_() > amount) {
@@ -364,6 +365,9 @@ class Donate extends React.PureComponent {
     }
     if (showIncentives && this.sumIncentives_() < amount) {
       return 'Total donation amount not allocated.';
+    }
+    if (amount < minimumDonation) {
+      return 'Donation amount below minimum.';
     }
     if (currentIncentives.some(ci => !incentives.find(i => i.id === ci.bid))) {
       return 'At least one incentive is no longer valid.';
@@ -414,17 +418,13 @@ class Donate extends React.PureComponent {
           <div>
             <input type='hidden' name='requestedvisibility' value={requestedalias ? 'ALIAS' : 'ANON'}/>
             <input className={cn(styles['underline'], styles['preferredNameInput'])} placeholder='Preferred Name/Alias'
-                   type='text'
-                   name='requestedalias' value={requestedalias}
-                   onChange={this.setValue('requestedalias')}/>
+                   type='text' name='requestedalias' value={requestedalias} onChange={this.setValue('requestedalias')}/>
             <div>(Leave blank for Anonymous)</div>
           </div>
           <div>
             <input className={cn(styles['underline'], styles['preferredEmailInput'])} placeholder='Email Address'
-                   type='email'
-                   name='requestedemail' value={requestedemail}
-                   onChange={this.setValue('requestedemail')}/>
-            <div>(Click here for our privacy policy)</div>
+                   type='email' name='requestedemail' value={requestedemail} onChange={this.setValue('requestedemail')}/>
+            <div>(Click <a className={cn('block-external', styles['privacy'])} href='https://gamesdonequick.com/privacy/' target='_blank' rel='noopener noreferrer'>here</a> for our privacy policy)</div>
           </div>
           <div className={styles['emailCTA']}>
             Do you want to receive emails from {event.receivername}?
@@ -444,8 +444,8 @@ class Donate extends React.PureComponent {
           </div>
           <div className={styles['donationArea']}>
             <div className={styles['donationAmount']}>
-              <input className={styles['amountInput']} placeholder='Enter Amount' type='number' name='amount'
-                     value={amount} step={step} min={event.minimumdonation} max={maximumDonation}
+              <input className={cn(styles['underline'], styles['amountInput'])} placeholder='Enter Amount' type='number' name='amount'
+                     value={amount} step={step} min={minimumDonation} max={maximumDonation}
                      onChange={this.setValue('amount')}/>
               <div className={styles['buttons']}>
                 <button onClick={this.setAmount(25)}>$25</button>
@@ -462,14 +462,18 @@ class Donate extends React.PureComponent {
             {showPrizes ?
               <div className={styles['prizeInfo']}>
                 <div className={styles['cta']}>Donations can enter you to win prizes!</div>
-                <div><a href={prizesUrl}>Current prize list (New tab)</a></div>
-                {rulesUrl ? <div><a href={rulesUrl}>Official Rules (New tab)</a></div> : null}
+                <div><a className='block-external' href={prizesUrl} target='_blank' rel='noopener noreferrer'>Current prize list (New tab)</a></div>
+                {rulesUrl ?
+                  <React.Fragment>
+                    <div><a className='block-external' href={rulesUrl} target='_blank' rel='noopener noreferrer'>Official Rules (New tab)</a></div>
+                    <div className={cn(styles['disclaimer'], styles['cta'])}>No donation necessary for a chance to win. See sweepstakes rules for details and instructions.</div>
+                  </React.Fragment> : null}
               </div> :
               null}
           </div>
           <div className={styles['commentArea']}>
             <div>(OPTIONAL) LEAVE A COMMENT?</div>
-            <textarea className={styles['commentInput']} placeholder='Greetings from Germany!'
+            <textarea className={styles['commentInput']} placeholder='Enter Comment Here'
                       name='comment' maxLength={5000}/>
             <label htmlFor='comment'>Please refrain from offensive language or hurtful remarks. All donation comments
               are
