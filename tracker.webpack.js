@@ -7,6 +7,8 @@ const _ = require('lodash');
 
 const PROD = process.env.NODE_ENV === 'production';
 
+console.log(PROD ? 'PRODUCTION BUILD' : 'DEVELOPMENT BUILD');
+
 module.exports = {
   context: __dirname,
   entry: {

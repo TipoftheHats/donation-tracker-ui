@@ -377,6 +377,7 @@ class Donate extends React.PureComponent {
             Do you want to receive emails from {event.receivername}?
           </div>
           <div>
+            <input type='hidden' name='requestedsolicitemail' value={requestedsolicitemail} />
             <button className={cn({[styles['selected']]: requestedsolicitemail === 'YES'})} disabled={requestedsolicitemail === 'YES'} onClick={this.setEmail('YES')}>Yes</button>
             <button className={cn({[styles['selected']]: requestedsolicitemail === 'NO'})} disabled={requestedsolicitemail === 'NO'} onClick={this.setEmail('NO')}>No</button>
             <button className={cn({[styles['selected']]: requestedsolicitemail === 'CURR'})} disabled={requestedsolicitemail === 'CURR'} onClick={this.setEmail('CURR')}>Use Existing Preference (No if not already set)</button>
