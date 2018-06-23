@@ -181,6 +181,7 @@
 :local(.prizeList) {
   border-radius: 5px;
   border: 1px solid #5E0324;
+  width: 256px;
 }
 
 :local(.prizeList .header) {
@@ -192,6 +193,12 @@
 
 :local(.prizeList .item) {
   padding: 4px;
+}
+
+:local(.prizeList .item div) {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 :local(.prizeList div.item:nth-of-type(2n)) {
@@ -341,6 +348,12 @@
 
 :local(.result):nth-of-type(2n) {
   background-color: rgba(94, 3, 36, 0.1);
+}
+
+:local(.result div) {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 :local(.resultRun) {
