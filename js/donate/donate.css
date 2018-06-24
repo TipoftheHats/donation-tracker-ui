@@ -1,5 +1,6 @@
 :local(.donationForm) {
   font-family: museo-sans,"Museo Sans 500 Regular","Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-weight: 500;
   margin: auto;
   display: flex;
   flex-direction: column;
@@ -206,11 +207,11 @@
 }
 
 :local(.prizeList .item .name) {
-  font-size: 12px;
+  font-size: 16px;
 }
 
 :local(.prizeList .item .bidinfo) {
-  font-size: 10px;
+  font-size: 14px;
 }
 
 :local(.commentArea) {
@@ -358,14 +359,14 @@
 
 :local(.resultRun) {
   padding-top: 4px;
-  line-height: 15px;
+  line-height: 16px;
   font-size: 16px;
   font-family: Cubano,futura-pt,museo-sans,"Helvetica Neue",Helvetica,Arial,sans-serif;
 }
 
 :local(.resultName) {
   font-weight: 500;
-  line-height: 15px;
+  line-height: 16px;
   font-size: 14px;
 }
 

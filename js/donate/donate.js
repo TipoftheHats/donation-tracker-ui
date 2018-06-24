@@ -480,7 +480,7 @@ class Donate extends React.PureComponent {
                     </div>
                   )}
                 </div>
-                <div><a className='block-external' href={prizesUrl} target='_blank' rel='noopener noreferrer'>Current
+                <div><a className='block-external' href={prizesUrl} target='_blank' rel='noopener noreferrer'>Full
                   prize list (New tab)</a></div>
                 {rulesUrl ?
                   <React.Fragment>
