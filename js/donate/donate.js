@@ -37,6 +37,7 @@ class Incentives extends React.PureComponent {
   state = {
     search: '',
     amount: 0,
+    bidsformempty: [],
   };
 
   static getDerivedStateFromProps(props, state) {
@@ -56,7 +57,7 @@ class Incentives extends React.PureComponent {
   }
 
   componentDidMount() {
-    this.bidsformempty = Array.from(document.querySelector('table[data-form=bidsform][data-form-type=empty]').querySelectorAll('input')).filter(i => i.id);
+    this.setState({bidsformempty: Array.from(document.querySelector('table[data-form=bidsform][data-form-type=empty]').querySelectorAll('input')).filter(i => i.id)});
   }
 
   matchResults_() {
@@ -137,6 +138,7 @@ class Incentives extends React.PureComponent {
   render() {
     const {
       amount,
+      bidsformempty,
       choices,
       search,
       selected,
@@ -175,7 +177,7 @@ class Incentives extends React.PureComponent {
                 const incentive = incentives.find(i => i.id === ci.bid) || {name: formErrors.bidsform[k].bid};
                 return (
                   <div key={ci.bid} onClick={deleteIncentive(k)} className={styles['item']}>
-                    {this.bidsformempty.map(i =>
+                    {bidsformempty && bidsformempty.map(i =>
                       <input
                         key={i.name.replace('__prefix__', k)}
                         id={i.id.replace('__prefix__', k)}
@@ -444,11 +446,11 @@ class Donate extends React.PureComponent {
           </div>
           <div className={styles['emailButtons']}>
             <input type='hidden' name='requestedsolicitemail' value={requestedsolicitemail}/>
-            <button className={cn({[styles['selected']]: requestedsolicitemail === 'YES'})}
-                    disabled={requestedsolicitemail === 'YES'} onClick={this.setEmail('YES')}>Yes
+            <button className={cn({[styles['selected']]: requestedsolicitemail === 'OPTIN'})}
+                    disabled={requestedsolicitemail === 'OPTIN'} onClick={this.setEmail('OPTIN')}>Yes
             </button>
-            <button className={cn({[styles['selected']]: requestedsolicitemail === 'NO'})}
-                    disabled={requestedsolicitemail === 'NO'} onClick={this.setEmail('NO')}>No
+            <button className={cn({[styles['selected']]: requestedsolicitemail === 'OPTOUT'})}
+                    disabled={requestedsolicitemail === 'OPTOUT'} onClick={this.setEmail('OPTOUT')}>No
             </button>
             <button className={cn({[styles['selected']]: requestedsolicitemail === 'CURR'})}
                     disabled={requestedsolicitemail === 'CURR'} onClick={this.setEmail('CURR')}>Use Existing Preference
