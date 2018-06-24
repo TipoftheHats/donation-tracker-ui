@@ -283,7 +283,7 @@ class Donate extends React.PureComponent {
     prizes: PropTypes.arrayOf(PropTypes.shape({
       id: PropTypes.number.isRequired,
       description: PropTypes.string,
-      minimumBid: PropTypes.string.isRequired,
+      minimumbid: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
     }).isRequired).isRequired,
     prizesUrl: PropTypes.string.isRequired,
@@ -383,6 +383,10 @@ class Donate extends React.PureComponent {
     return null;
   }
 
+  wrapPrize_(prize, children) {
+    return prize.url ? <a href={prize.url}>{children}</a> : children;
+  }
+
   componentWillMount() {
     this.bidsformmanagement = Array.from(document.querySelector('table[data-form=bidsform][data-form-type=management]').querySelectorAll('input')).filter(i => i.id);
     this.prizesform = Array.from(document.querySelector('table[data-form=prizesform]').querySelectorAll('input')).filter(i => i.id);
@@ -422,12 +426,13 @@ class Donate extends React.PureComponent {
           <div className={styles['biginput']}>
             <input type='hidden' name='requestedvisibility' value={requestedalias ? 'ALIAS' : 'ANON'}/>
             <input className={cn(styles['underline'], styles['preferredNameInput'])} placeholder='Preferred Name/Alias'
-                   type='text' name='requestedalias' value={requestedalias} onChange={this.setValue('requestedalias')}/>
+                   type='text' name='requestedalias' value={requestedalias} onChange={this.setValue('requestedalias')}
+                   maxLength='32'/>
             <div>(Leave blank for Anonymous)</div>
           </div>
           <div className={styles['biginput']}>
             <input className={cn(styles['underline'], styles['preferredEmailInput'])} placeholder='Email Address'
-                   type='email' name='requestedemail' value={requestedemail}
+                   type='email' name='requestedemail' value={requestedemail} maxLength='128'
                    onChange={this.setValue('requestedemail')}/>
             <div>(Click <a className={cn('block-external', styles['privacy'])}
                            href='https://gamesdonequick.com/privacy/' target='_blank'
@@ -474,9 +479,17 @@ class Donate extends React.PureComponent {
                 <div className={styles['prizeList']}>
                   <div className={styles['header']}>CURRENT PRIZE LIST:</div>
                   {prizes.map(prize =>
-                    <div className={styles['item']}>
-                      <div className={cn(styles['name'], styles['cubano'])}>{prize.name}</div>
-                      <div className={styles['bidinfo']}>${prize.minimumbid} {prize.sumdonations ? 'Total Donations' : 'Minimum Single Donation'}</div>
+                    <div key={prize.id} className={styles['item']}>
+                      {this.wrapPrize_(prize,
+                        <React.Fragment>
+                          <div className={cn(styles['name'], styles['cubano'])}>
+                            {prize.name}
+                          </div>
+                          <div className={styles['bidinfo']}>
+                            ${prize.minimumbid} {prize.sumdonations ? 'Total Donations' : 'Minimum Single Donation'}
+                          </div>
+                        </React.Fragment>
+                      )}
                     </div>
                   )}
                 </div>

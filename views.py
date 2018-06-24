@@ -120,7 +120,15 @@ def donate(request, event):
     bidsArray = [bid_info(o) for o in bids]
 
     def prize_info(prize):
-        result = {'id': prize.id, 'name': prize.name, 'description': prize.description, 'minimumbid': prize.minimumbid, 'sumdonations': prize.sumdonations}
+        result = {
+            'id': prize.id,
+            'name': prize.name,
+            'description': prize.description,
+            'minimumbid': prize.minimumbid,
+            'sumdonations': prize.sumdonations,
+            'url': reverse('tracker:prize', args=(prize.id,)),
+            'image': prize.image,
+        }
         return result
 
     prizesArray = [prize_info(o) for o in prizes.all()]

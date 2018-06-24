@@ -166,7 +166,7 @@
   font-size: 12px;
 }
 
-:local(.prizeInfo) a {
+:local(.prizeInfo) a.block-external {
   border: 1px solid #5E0324;
   border-radius: 5px;
   width: 256px;
@@ -183,6 +183,10 @@
   border-radius: 5px;
   border: 1px solid #5E0324;
   width: 256px;
+}
+
+:local(.prizeList .item a) {
+  color: #5E0324;
 }
 
 :local(.prizeList .header) {
