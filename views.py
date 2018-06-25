@@ -18,6 +18,7 @@ from tracker.views.donateviews import process_form
 
 @csrf_protect
 def index(request):
+    raise Http404
     bundle = webpack_manifest.load(
         os.path.abspath(os.path.join(os.path.dirname(__file__), 'ui-tracker.manifest.json')),
         settings.STATIC_URL,
