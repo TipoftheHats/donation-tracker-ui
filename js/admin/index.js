@@ -4,10 +4,11 @@ import {Route} from 'react-router';
 import {Provider} from 'react-redux';
 import {ConnectedRouter} from 'react-router-redux';
 
+import ErrorBoundary from 'ui/public/errorBoundary';
+import ajaxSetup from 'ui/public/ajaxsetup';
+
 import App from './app';
-import ErrorBoundary from '../public/errorBoundary';
 import DevTools from '../devtools';
-import ajaxSetup from '../public/ajaxsetup';
 
 if (__DEVTOOLS__) {
   window.store = App.store;

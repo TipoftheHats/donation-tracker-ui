@@ -16,7 +16,7 @@ class FormField extends React.PureComponent {
     const {name, value} = this.props;
     const {onChange_} = this;
     return (
-      <input name={name} value={value} onChange={onChange_}/>
+      <input name={name} value={value} onChange={onChange_} placeholder={name} />
     );
   }
 
