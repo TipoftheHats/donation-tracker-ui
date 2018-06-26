@@ -19,7 +19,6 @@ const IncentiveProps = PropTypes.shape({
   count: PropTypes.number.isRequired,
   goal: PropTypes.string,
   description: PropTypes.string.isRequired,
-  label: PropTypes.string.isRequired,
 });
 
 class Incentives extends React.PureComponent {
@@ -150,12 +149,13 @@ class Incentives extends React.PureComponent {
       step,
       total,
       currentIncentives,
+      errors,
       incentives,
       deleteIncentive,
     } = this.props;
     const addIncentiveDisabled = this.addIncentiveDisabled_();
     return (
-      <div className={styles['incentives']}>
+      <div className={styles['incentives']} data-aid='incentives'>
         <div className={styles['left']}>
           <div className={styles['searches']}>
             <input className={styles['search']} value={search} onChange={this.setValue('search')}
@@ -163,7 +163,7 @@ class Incentives extends React.PureComponent {
             <div className={styles['results']}>
               {
                 this.matchResults_().map(result =>
-                  <div className={styles['result']} key={result.id} onClick={this.select(result.id)}>
+                  <div className={styles['result']} data-aid='result' key={result.id} onClick={this.select(result.id)}>
                     <div className={styles['resultRun']}>{result.run}</div>
                     <div className={styles['resultName']}>{result.name}</div>
                   </div>
@@ -174,16 +174,16 @@ class Incentives extends React.PureComponent {
           <div className={styles['assigned']}>
             <div className={styles['header']}>YOUR INCENTIVES</div>
             {currentIncentives.map((ci, k) => {
-                const incentive = incentives.find(i => i.id === ci.bid) || {name: formErrors.bidsform[k].bid};
+                const incentive = incentives.find(i => i.id === ci.bid) || {name: errors[k].bid, id: `error-${k}`};
                 return (
-                  <div key={ci.bid} onClick={deleteIncentive(k)} className={styles['item']}>
+                  <div key={incentive.id} onClick={deleteIncentive(k)} className={styles['item']}>
                     {bidsformempty && bidsformempty.map(i =>
                       <input
                         key={i.name.replace('__prefix__', k)}
                         id={i.id.replace('__prefix__', k)}
                         name={i.name.replace('__prefix__', k)}
                         type='hidden'
-                        value={ci[i.name.split('-').slice(-1)[0]]}
+                        value={ci[i.name.split('-').slice(-1)[0]] || ''}
                       />
                     )}
                     <div className={cn(styles['runname'], styles['cubano'])}>{incentive.runname}</div>
@@ -258,9 +258,7 @@ class Incentives extends React.PureComponent {
 
 class Donate extends React.PureComponent {
   static propTypes = {
-    incentives: PropTypes.arrayOf(PropTypes.shape({
-      id: PropTypes.number.isRequired,
-    }).isRequired).isRequired,
+    incentives: PropTypes.arrayOf(IncentiveProps.isRequired).isRequired,
     formErrors: PropTypes.shape({
       bidsform: PropTypes.array.isRequired,
       commentform: PropTypes.object.isRequired,
@@ -271,7 +269,7 @@ class Donate extends React.PureComponent {
       amount: PropTypes.string,
     }).isRequired,
     initialIncentives: PropTypes.arrayOf(PropTypes.shape({
-      bid: PropTypes.number.isRequired,
+      bid: PropTypes.number, // will be null if the bid closed while we were filling it out
       amount: PropTypes.string.isRequired,
       customoptionname: PropTypes.string.isRequired,
     }).isRequired).isRequired,
@@ -291,6 +289,7 @@ class Donate extends React.PureComponent {
     prizesUrl: PropTypes.string.isRequired,
     rulesUrl: PropTypes.string,
     csrfToken: PropTypes.string,
+    onSubmit: PropTypes.func,
   };
 
   static defaultProps = {
@@ -306,7 +305,10 @@ class Donate extends React.PureComponent {
     requestedalias: this.props.initialForm.requestedalias || '',
     requestedemail: this.props.initialForm.requestedemail || '',
     requestedsolicitemail: this.props.initialForm.requestedsolicitemail || 'CURR',
+    comment: this.props.initialForm.comment || '',
     amount: this.props.initialForm.amount || '',
+    bidsformmanagement: null,
+    prizesform: null,
   };
 
   setValue = key => {
@@ -389,9 +391,11 @@ class Donate extends React.PureComponent {
     return prize.url ? <a href={prize.url}>{children}</a> : children;
   }
 
-  componentWillMount() {
-    this.bidsformmanagement = Array.from(document.querySelector('table[data-form=bidsform][data-form-type=management]').querySelectorAll('input')).filter(i => i.id);
-    this.prizesform = Array.from(document.querySelector('table[data-form=prizesform]').querySelectorAll('input')).filter(i => i.id);
+  componentDidMount() {
+    this.setState({
+      bidsformmanagement: Array.from(document.querySelector('table[data-form=bidsform][data-form-type=management]').querySelectorAll('input')).filter(i => i.id),
+      prizesform: Array.from(document.querySelector('table[data-form=prizesform]').querySelectorAll('input')).filter(i => i.id),
+    });
   }
 
   render() {
@@ -401,7 +405,10 @@ class Donate extends React.PureComponent {
       requestedalias,
       requestedemail,
       requestedsolicitemail,
+      comment,
       amount,
+      bidsformmanagement,
+      prizesform,
     } = this.state;
     const {
       step,
@@ -415,11 +422,12 @@ class Donate extends React.PureComponent {
       donateUrl,
       incentives,
       csrfToken,
+      onSubmit,
     } = this.props;
     // TODO: show more form errors
     const finishDisabled = this.finishDisabled_();
     return (
-      <form className={styles['donationForm']} action={donateUrl} method='post'>
+      <form className={styles['donationForm']} action={donateUrl} method='post' onSubmit={onSubmit}>
         <input type='hidden' name='csrfmiddlewaretoken' value={csrfToken}/>
         <div className={styles['donation']}>
           <div className={cn(styles['cubano'], styles['thankyou'])}>THANK YOU</div>
@@ -446,13 +454,13 @@ class Donate extends React.PureComponent {
           </div>
           <div className={styles['emailButtons']}>
             <input type='hidden' name='requestedsolicitemail' value={requestedsolicitemail}/>
-            <button className={cn({[styles['selected']]: requestedsolicitemail === 'OPTIN'})}
+            <button id='email_optin' className={cn({[styles['selected']]: requestedsolicitemail === 'OPTIN'})}
                     disabled={requestedsolicitemail === 'OPTIN'} onClick={this.setEmail('OPTIN')}>Yes
             </button>
-            <button className={cn({[styles['selected']]: requestedsolicitemail === 'OPTOUT'})}
+            <button id='email_optout' className={cn({[styles['selected']]: requestedsolicitemail === 'OPTOUT'})}
                     disabled={requestedsolicitemail === 'OPTOUT'} onClick={this.setEmail('OPTOUT')}>No
             </button>
-            <button className={cn({[styles['selected']]: requestedsolicitemail === 'CURR'})}
+            <button id='email_curr' className={cn({[styles['selected']]: requestedsolicitemail === 'CURR'})}
                     disabled={requestedsolicitemail === 'CURR'} onClick={this.setEmail('CURR')}>Use Existing Preference
               (No if not already set)
             </button>
@@ -460,8 +468,7 @@ class Donate extends React.PureComponent {
           <div className={styles['donationArea']}>
             <div className={styles['donationAmount']}>
               <input className={cn(styles['underline'], styles['amountInput'])} placeholder='Enter Amount' type='number'
-                     name='amount'
-                     value={amount} step={step} min={minimumDonation} max={maximumDonation}
+                     name='amount' value={amount} step={step} min={minimumDonation} max={maximumDonation}
                      onChange={this.setValue('amount')}/>
               <div className={styles['buttons']}>
                 <button onClick={this.setAmount(25)}>$25</button>
@@ -510,8 +517,8 @@ class Donate extends React.PureComponent {
           </div>
           <div className={styles['commentArea']}>
             <div className={styles['cubano']}>(OPTIONAL) LEAVE A COMMENT?</div>
-            <textarea className={styles['commentInput']} placeholder='Enter Comment Here'
-                      name='comment' maxLength={5000}/>
+            <textarea className={styles['commentInput']} placeholder='Enter Comment Here' value={comment}
+                      onChange={this.setValue('comment')} name='comment' maxLength={5000}/>
             <label htmlFor='comment'>Please refrain from offensive language or hurtful remarks. All donation comments
               are screened and will be removed from the website if deemed unacceptable.</label>
           </div>
@@ -525,6 +532,7 @@ class Donate extends React.PureComponent {
             <button
               className={styles['inverse']}
               disabled={showIncentives}
+              id='show_incentives'
               type='button'
               onClick={() => {
                 this.setState({showIncentives: true});
@@ -532,7 +540,7 @@ class Donate extends React.PureComponent {
               YES!
             </button>
             <button
-              id='skip'
+              id='skip_incentives'
               className={styles['inverse']}
               disabled={showIncentives || this.finishDisabled_()}
               type='submit'>
@@ -565,12 +573,12 @@ class Donate extends React.PureComponent {
           </React.Fragment> :
           null}
         <React.Fragment>
-          {this.bidsformmanagement.map(i => <input key={i.id} id={i.id} name={i.name}
-                                                   value={i.name.includes('TOTAL_FORMS') ? currentIncentives.length : i.value}
-                                                   type='hidden'/>)}
+          {bidsformmanagement && bidsformmanagement.map(i => <input key={i.id} id={i.id} name={i.name}
+                                                                    value={i.name.includes('TOTAL_FORMS') ? currentIncentives.length : i.value}
+                                                                    type='hidden'/>)}
         </React.Fragment>
         <React.Fragment>
-          {this.prizesform.map(i => <input key={i.id} id={i.id} name={i.name} value={i.value} type='hidden'/>)}
+          {prizesform && prizesform.map(i => <input key={i.id} id={i.id} name={i.name} value={i.value} type='hidden'/>)}
         </React.Fragment>
       </form>
     );

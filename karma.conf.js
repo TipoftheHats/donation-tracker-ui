@@ -11,11 +11,13 @@ module.exports = function (config) {
     files: [
       'js/init/index.js',
       'js/**/*_spec.js',
+      'js/**/*Spec.js',
     ],
 
     preprocessors: {
       'js/init/*.js': ['webpack'],
       'js/**/*_spec.js': ['webpack'],
+      'js/**/*Spec.js': ['webpack'],
     },
 
     webpack: {
