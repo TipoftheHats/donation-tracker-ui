@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "GDQ Donation Tracker",
   "scripts": {
-    "build": "cross-env NODE_ENV=production webpack --config tracker.webpack.js",
+    "build": "git clean -fxd static && cross-env NODE_ENV=production webpack --config tracker.webpack.js",
     "test": "karma start --single-run",
     "test:watch": "karma start"
   },

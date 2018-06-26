@@ -226,14 +226,6 @@ describe('#Donate', () => {
     it('email opt out', () => {
       subject = render();
       TestUtils.Simulate.change(ReactDOM.findDOMNode(subject).querySelector('input[name=amount]'), {target: {value: 5}});
-      TestUtils.Simulate.click(ReactDOM.findDOMNode(subject).querySelector('#email_optin'));
-      TestUtils.Simulate.submit(ReactDOM.findDOMNode(subject));
-      expect(formData.get('requestedsolicitemail')).toBe('OPTIN');
-    });
-
-    it('email opt out', () => {
-      subject = render();
-      TestUtils.Simulate.change(ReactDOM.findDOMNode(subject).querySelector('input[name=amount]'), {target: {value: 5}});
       TestUtils.Simulate.click(ReactDOM.findDOMNode(subject).querySelector('#email_optout'));
       TestUtils.Simulate.submit(ReactDOM.findDOMNode(subject));
       expect(formData.get('requestedsolicitemail')).toBe('OPTOUT');

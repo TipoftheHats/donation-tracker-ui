@@ -33,6 +33,9 @@ module.exports = {
     new webpack.DefinePlugin({
       __DEVTOOLS__: !PROD,
     }),
+    new webpack.EnvironmentPlugin({
+      NODE_ENV: 'development',
+    }),
     PROD && new webpack.optimize.UglifyJsPlugin({comments: false}),
   ]),
   devServer: PROD ? {} : sharedConfig.devServer,
