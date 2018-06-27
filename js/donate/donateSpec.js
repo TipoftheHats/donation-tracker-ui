@@ -230,6 +230,53 @@ describe('#Donate', () => {
       TestUtils.Simulate.submit(ReactDOM.findDOMNode(subject));
       expect(formData.get('requestedsolicitemail')).toBe('OPTOUT');
     });
+
+    it('incentives', () => {
+      subject = render();
+      const node = ReactDOM.findDOMNode(subject);
+      TestUtils.Simulate.change(node.querySelector('input[name=amount]'), {target: {value: 15}});
+      TestUtils.Simulate.click(node.querySelector('#show_incentives'));
+      expectIncentivesVisible();
+      TestUtils.Simulate.click(node.querySelectorAll('[data-aid=incentives] [data-aid=result]')[0]);
+      TestUtils.Simulate.change(node.querySelector('input[name=new_amount]'), {target: {value: 5}});
+      TestUtils.Simulate.click(node.querySelector('#add'));
+      TestUtils.Simulate.click(node.querySelectorAll('[data-aid=incentives] [data-aid=result]')[1]);
+      TestUtils.Simulate.change(node.querySelectorAll('[data-aid=incentives] input[type=checkbox]')[1], {target: {checked: true}});
+      TestUtils.Simulate.change(node.querySelector('input[name=new_amount]'), {target: {value: 5}});
+      TestUtils.Simulate.click(node.querySelector('#add'));
+      TestUtils.Simulate.click(node.querySelectorAll('[data-aid=incentives] [data-aid=result]')[1]);
+      TestUtils.Simulate.change(node.querySelectorAll('[data-aid=incentives] input[type=checkbox]')[0], {target: {checked: true}});
+      TestUtils.Simulate.change(node.querySelector('[data-aid=incentives] input[name=newOptionValue]'), {target: {value: 'Black'}});
+      TestUtils.Simulate.change(node.querySelector('input[name=new_amount]'), {target: {value: 5}});
+      TestUtils.Simulate.click(node.querySelector('#add'));
+      TestUtils.Simulate.submit(node);
+      expect([...formData.entries()].sort((a, b) => a[0].localeCompare(b[0]))).toEqual([
+          ['amount', '15'],
+          ['bidsform-0-amount', '5'],
+          ['bidsform-0-bid', '1'],
+          ['bidsform-0-customoptionname', ''],
+          ['bidsform-1-amount', '5'],
+          ['bidsform-1-bid', '3'],
+          ['bidsform-1-customoptionname', ''],
+          ['bidsform-2-amount', '5'],
+          ['bidsform-2-bid', '2'],
+          ['bidsform-2-customoptionname', 'Black'],
+          ['bidsform-INITIAL_FORMS', '0'],
+          ['bidsform-MAX_NUM_FORMS', '10'],
+          ['bidsform-MIN_NUM_FORMS', '0'],
+          ['bidsform-TOTAL_FORMS', '3'],
+          ['comment', ''],
+          ['csrfmiddlewaretoken', 'deadbeef'],
+          ['prizeForm-INITIAL_FORMS', '0'],
+          ['prizeForm-MAX_NUM_FORMS', '10'],
+          ['prizeForm-MIN_NUM_FORMS', '0'],
+          ['prizeForm-TOTAL_FORMS', '1'],
+          ['requestedalias', ''],
+          ['requestedemail', ''],
+          ['requestedsolicitemail', 'CURR'],
+          ['requestedvisibility', 'ANON'],
+      ]);
+    });
   });
 
   function expectIncentivesVisible() {
@@ -252,15 +299,54 @@ describe('#Donate', () => {
   function render(props = {}) {
     const defaultProps = {
       csrfToken: 'deadbeef',
-      incentives: [{
-        id: 1,
-        goal: '1000.00',
-        amount: '0.00',
-        count: 0,
-        name: 'Challenge',
-        runname: 'Test Run',
-        description: 'It is difficult but entertaining.',
-      }],
+      incentives: [
+        {
+          id: 1,
+          goal: '1000.00',
+          amount: '0.00',
+          count: 0,
+          name: 'Challenge',
+          runname: 'Test Run',
+          description: 'It is difficult but entertaining.',
+        },
+        {
+          id: 2,
+          amount: '0.00',
+          count: 0,
+          custom: true,
+          description: 'Which color?',
+          name: 'Paint Color',
+          runname: 'Test Run',
+        },
+        {
+          id: 3,
+          amount: '0.00',
+          count: 0,
+          name: 'Red',
+          runname: 'Test Run',
+          description: '',
+          parent: {
+            id: 2,
+            custom: true,
+            description: 'Which color?',
+            name: 'Paint Color',
+          },
+        },
+        {
+          id: 4,
+          amount: '0.00',
+          count: 0,
+          name: 'Blue',
+          runname: 'Test Run',
+          description: '',
+          parent: {
+            id: 2,
+            custom: true,
+            description: 'Which color?',
+            name: 'Paint Color',
+          },
+        },
+      ],
       initialForm: {},
       initialIncentives: [],
       formErrors: {
