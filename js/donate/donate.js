@@ -231,7 +231,7 @@ class Incentives extends React.PureComponent {
                            onChange={() => this.setState({selectedChoice: choice.id, newOption: false})}
                            name={`choice-${choice.id}`}/>
                     <label htmlFor={`choice-${choice.id}`}>{choice.name}</label>
-                    <span style={{float: 'right'}}>${choice.amount}</span>
+                    <span>${choice.amount}</span>
                   </div>)
                 )}
               </React.Fragment> :
