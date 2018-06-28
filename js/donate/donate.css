@@ -432,6 +432,7 @@
 :local(.choice) label {
   margin: 0;
   flex-grow: 1;
+  padding-left: 4px;
 }
 
 :local(.choice):nth-of-type(2n+1) {
