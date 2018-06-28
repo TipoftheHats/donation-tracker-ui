@@ -487,20 +487,22 @@ class Donate extends React.PureComponent {
                 <div className={styles['cta']}>Donations can enter you to win prizes!</div>
                 <div className={styles['prizeList']}>
                   <div className={styles['header']}>CURRENT PRIZE LIST:</div>
-                  {prizes.map(prize =>
-                    <div key={prize.id} className={styles['item']}>
-                      {this.wrapPrize_(prize,
-                        <React.Fragment>
-                          <div className={cn(styles['name'], styles['cubano'])}>
-                            {prize.name}
-                          </div>
-                          <div className={styles['bidinfo']}>
-                            ${prize.minimumbid} {prize.sumdonations ? 'Total Donations' : 'Minimum Single Donation'}
-                          </div>
-                        </React.Fragment>
-                      )}
-                    </div>
-                  )}
+                  <div className={styles['prizes']}>
+                    {prizes.map(prize =>
+                      <div key={prize.id} className={styles['item']}>
+                        {this.wrapPrize_(prize,
+                          <React.Fragment>
+                            <div className={cn(styles['name'], styles['cubano'])}>
+                              {prize.name}
+                            </div>
+                            <div className={styles['bidinfo']}>
+                              ${prize.minimumbid} {prize.sumdonations ? 'Total Donations' : 'Minimum Single Donation'}
+                            </div>
+                          </React.Fragment>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <div><a className='block-external' href={prizesUrl} target='_blank' rel='noopener noreferrer'>Full
                   prize list (New tab)</a></div>

@@ -185,6 +185,11 @@
   width: 256px;
 }
 
+:local(.prizeList .prizes) {
+  max-height: 224px;
+  overflow-y: auto;
+}
+
 :local(.prizeList .item a) {
   color: #5E0324;
 }
@@ -206,7 +211,7 @@
   overflow: hidden;
 }
 
-:local(.prizeList div.item:nth-of-type(2n)) {
+:local(.prizeList div.item:nth-child(2n+1)) {
   background-color: rgba(94, 3, 36, 0.1);
 }
 
