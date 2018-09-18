@@ -280,6 +280,10 @@ class Donate extends React.PureComponent {
     minimumDonation: PropTypes.number.isRequired,
     maximumDonation: PropTypes.number.isRequired,
     donateUrl: PropTypes.string.isRequired,
+    steamID: PropTypes.string,
+    totalDonated: PropTypes.number,
+    steamLogin: PropTypes.string,
+    steamDisconnect: PropTypes.string,
     prizes: PropTypes.arrayOf(PropTypes.shape({
       id: PropTypes.number.isRequired,
       description: PropTypes.string,
@@ -304,6 +308,8 @@ class Donate extends React.PureComponent {
     currentIncentives: this.props.initialIncentives || [],
     requestedalias: this.props.initialForm.requestedalias || '',
     requestedemail: this.props.initialForm.requestedemail || '',
+    steamID: this.props.steamID || 'None',
+    totalDonated: this.props.totalDonated || '0',
     requestedsolicitemail: this.props.initialForm.requestedsolicitemail || 'CURR',
     comment: this.props.initialForm.comment || '',
     amount: this.props.initialForm.amount || '',
@@ -404,6 +410,8 @@ class Donate extends React.PureComponent {
       currentIncentives,
       requestedalias,
       requestedemail,
+      steamID,
+      totalDonated,
       requestedsolicitemail,
       comment,
       amount,
@@ -420,6 +428,8 @@ class Donate extends React.PureComponent {
       formErrors,
       prizes,
       donateUrl,
+      steamLogin,
+      steamDisconnect,
       incentives,
       csrfToken,
       onSubmit,
@@ -525,6 +535,24 @@ class Donate extends React.PureComponent {
               are screened and will be removed from the website if deemed unacceptable.</label>
           </div>
         </div>
+
+        <div className={styles['steamAuth']}>
+          <div className={styles['cubano']}>Steam Auth</div>
+            {steamID != "None" &&
+            <div>
+              <p>Steam ID: {steamID}</p>
+              <p>Total donated by this steamid during the event: ${totalDonated}</p>
+              <p><a id="disconnect" href={steamDisconnect}>Disconnect Steam account</a></p>
+            </div>
+            }
+            {steamID == "None" &&
+            <div>
+              <p>You will need to connect your steam account to receive in game items</p>
+              <p><a href={steamLogin} >Connect to Steam </a></p>
+            </div>
+          }
+        </div>
+        
         <div className={styles['incentivesCTA']}>
           <div className={styles['cubano']}>DONATION INCENTIVES</div>
           <div>Donation incentives can be used to add bonus runs to the schedule or influence choices by runners. Do
