@@ -281,7 +281,7 @@ class Donate extends React.PureComponent {
     maximumDonation: PropTypes.number.isRequired,
     donateUrl: PropTypes.string.isRequired,
     steamID: PropTypes.string,
-    totalDonated: PropTypes.number,
+    totalDonated: PropTypes.string,
     steamLogin: PropTypes.string,
     steamDisconnect: PropTypes.string,
     prizes: PropTypes.arrayOf(PropTypes.shape({
