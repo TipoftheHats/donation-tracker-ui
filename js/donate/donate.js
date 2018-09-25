@@ -549,14 +549,29 @@ class Donate extends React.PureComponent {
             <div>
               <p>You will need to connect your steam account to receive in game items</p>
               <p><a href={steamLogin} >Connect to Steam </a></p>
+              <p> <sub>(Note: Connecting your steam account will require you to fill out this form again)</sub></p>
             </div>
           }
+          <div className={styles['cubano']}> Earn in-game TF2 medals for donating! </div>
+          <div>
+            (You must connect your Steam account in order for your donations to count towards a medal. Donations made on our <a href="https://scrap.tf/toth">ScrapTF fundraiser</a> also count towards a medal.
+            We will add your ScrapTF item donation total to your cash donation total before determining which medal to award. Medals will be awarded a few weeks after the event has concluded.)
+          </div>
+          <div className={styles['medals']}>
+            <img className={styles['medal']} src={STATIC_URL + "res/images/toth2018_t1_large.png"} alt="Tier 1: Bronze TF2 Medal"></img>
+            <img className={styles['medal']} src={STATIC_URL + "res/images/toth2018_t2_large.png"} alt="Tier 2: Silver TF2 Medal"></img>
+            <img className={styles['medal']} src={STATIC_URL + "res/images/toth2018_t3_large.png"} alt="Tier 3: Gold TF2 Medal"></img>
+          </div>
+          <div>$10 - Jaunty Adventurer</div>
+          <div>$30 - Jaunty Voyager</div>
+          <div>$100 - Jaunty Globetrotter</div>
         </div>
-        
+
         <div className={styles['incentivesCTA']}>
           <div className={styles['cubano']}>DONATION INCENTIVES</div>
-          <div>Donation incentives can be used to add bonus runs to the schedule or influence choices by runners. Do
-            you wish to put your donation towards an incentive?
+          <div>
+            This section allows you to put your donation to one of our many challenges and choices. Find the choice you wish to use (the filter box will help you find it), select it, and enter the amount of your donation you want to apply to that choice.
+            You may split your donation up as many as 10 ways by clicking "Add".
           </div>
           <div className={styles['incentivesButtons']}>
             <button

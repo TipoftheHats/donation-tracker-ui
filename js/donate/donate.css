@@ -461,3 +461,9 @@
 :local(.steamAuth .cubano) {
   font-size: 24px;
 }
+:local(.medals) {
+  font-size: 24px;
+}
+:local(.medals .medal) {
+  width:175px;
+}
