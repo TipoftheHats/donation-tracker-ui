@@ -168,7 +168,7 @@ def donate(request, event):
                 'initialIncentives': pickedIncentives,
                 'donateUrl': request.get_full_path(),
                 'prizesUrl': request.build_absolute_uri(reverse('tracker:prizeindex', args=(event.id,))),
-                'rulesUrl': 'https://gamesdonequick.com/sweepstakes',  # TODO: put in settings?
+                'rulesUrl': 'http://tipofthehats.org/sweepstakes',  # TODO: put in settings?
                 'steamLogin': request.build_absolute_uri(reverse('tracker:social:begin', args=["steam"],)) + '?next=' + request.get_full_path(),
                 'steamDisconnect': request.build_absolute_uri(reverse('tracker:disconnect_steam')) + '?next=' + request.get_full_path(),
                 'steamID': request.session.get('uid'),
