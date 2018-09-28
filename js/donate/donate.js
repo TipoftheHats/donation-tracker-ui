@@ -461,7 +461,7 @@ class Donate extends React.PureComponent {
                    type='email' name='requestedemail' value={requestedemail} maxLength='128'
                    onChange={this.setValue('requestedemail')}/>
             <div>(Click <a className={cn('block-external', styles['privacy'])}
-                           href='https://gamesdonequick.com/privacy/' target='_blank'
+                           href='https://tipofthehats.org/privacy' target='_blank'
                            rel='noopener noreferrer'>here</a> for our privacy policy)
             </div>
           </div>
