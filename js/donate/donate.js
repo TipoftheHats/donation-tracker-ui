@@ -570,8 +570,8 @@ class Donate extends React.PureComponent {
         <div className={styles['incentivesCTA']}>
           <div className={styles['cubano']}>DONATION INCENTIVES</div>
           <div>
-            This section allows you to put your donation to one of our many challenges and choices. Find the choice you wish to use (the filter box will help you find it), select it, and enter the amount of your donation you want to apply to that choice.
-            You may split your donation up as many as 10 ways by clicking "Add".
+            Donation incentives can be used to add extra content to the schedule or influence the choices of the cast.
+            Do you wish to put your donation towards an incentive?
           </div>
           <div className={styles['incentivesButtons']}>
             <button
