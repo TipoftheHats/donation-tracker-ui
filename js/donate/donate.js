@@ -562,9 +562,9 @@ class Donate extends React.PureComponent {
             <img className={styles['medal']} src={STATIC_URL + "res/images/toth2018_t2_large.png"} alt="Tier 2: Silver TF2 Medal"></img>
             <img className={styles['medal']} src={STATIC_URL + "res/images/toth2018_t3_large.png"} alt="Tier 3: Gold TF2 Medal"></img>
           </div>
-          <div>$10 - Jaunty Adventurer</div>
-          <div>$30 - Jaunty Voyager</div>
-          <div>$100 - Jaunty Globetrotter</div>
+          <div>$10 - Jaunty Explorer</div>
+          <div>$30 - Jaunty Ranger</div>
+          <div>$100 - Jaunty Mountaineer</div>
         </div>
 
         <div className={styles['incentivesCTA']}>
