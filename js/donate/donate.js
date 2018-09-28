@@ -365,6 +365,12 @@ class Donate extends React.PureComponent {
     return this.state.currentIncentives.reduce((sum, ci) => sum + (+ci.amount), 0);
   }
 
+  // getTotal fixes floating point numbers appearing
+  getTotal(amount) {
+    var total = (amount || 0) - this.sumIncentives_();
+    return Math.round(total * 1e2) / 1e2;
+  }
+
   finishDisabled_() {
     const {
       amount,
@@ -603,7 +609,7 @@ class Donate extends React.PureComponent {
               currentIncentives={currentIncentives}
               deleteIncentive={this.deleteIncentive_}
               addIncentive={this.addIncentive_}
-              total={(amount || 0) - this.sumIncentives_()}
+              total={this.getTotal(amount)}
             />
             <div className={styles['finishArea']}>
               <button
