@@ -298,7 +298,7 @@ class Donate extends React.PureComponent {
 
   static defaultProps = {
     step: 0.01,
-    minimumDonation: 5,
+    minimumDonation: 1,
     maximumDonation: 10000,
     initialIncentives: [],
   };
